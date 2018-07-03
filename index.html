@@ -22,6 +22,13 @@
     <script src="scripts/fileSaver.min.js"></script>
     <script src="scripts/jszip.min.js"></script>
     <script src="scripts/oxml.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.collapse').on('shown.bs.collapse', function () {
+                $(this).find('input').focus();
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -97,8 +104,6 @@
                 var worksheet = workbook.addSheet('sheet1');
                 workbook.download(fileName).then(function () {
                     $('#example1Collapsible').collapse('hide');
-                    $('#fileNameDownloaded').text(fileName);
-                    $('#exampleModal').modal('show');
                 });
             }
         </script>
@@ -107,7 +112,7 @@
             <div class="alert alert-light">
                 var workbook = oxml.createXLSX();
                 <br/> var worksheet = workbook.addSheet('sheet1');
-                <br/> var workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
                 <hr/>
                 <p>
                     <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example1Collapsible" aria-expanded="false"
@@ -166,7 +171,8 @@
                     bar. updateSharedFormula can be seen in different examples below.
                 </p>
                 All these values will be used to fill data in worksheet using below methods:
-                <br/><br/>
+                <br/>
+                <br/>
                 <h5>updateValueInCell</h5>
                 <p>
                     updateValueInCell is used to fill a value in single cell of worksheet. This method is available on instance of worksheet
@@ -199,8 +205,6 @@
                         worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
                         workbook.download(fileName).then(function () {
                             $('#example2Collapsible').collapse('hide');
-                            $('#fileNameDownloaded').text(fileName);
-                            $('#exampleModal').modal('show');
                         });
                     }
                 </script>
@@ -223,7 +227,7 @@
                         <br/> worksheet.updateValueInCell({ type: 'formula', formula: '(B3 + C3)', value: 10 }, 3, 4);
                         <br/> worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 4, 1);
                         <br/> worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
-                        <br/> var workbook.download('workbook.xslx');
+                        <br/> workbook.download('workbook.xslx');
                         <hr/>
                         <p>
                             <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example2Collapsible" aria-expanded="false"
@@ -266,8 +270,6 @@
                         worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4');
                         workbook.download(fileName).then(function () {
                             $('#example3Collapsible').collapse('hide');
-                            $('#fileNameDownloaded').text(fileName);
-                            $('#exampleModal').modal('show');
                         });
                     }
                 </script>
@@ -281,7 +283,7 @@
                         <br/> worksheet.updateValuesInRow([5, 9], 3, 2);
                         <br/> worksheet.updateValuesInRow([null, 7, 3], 4);
                         <br/> worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4');
-                        <br/> var workbook.download('workbook.xslx');
+                        <br/> workbook.download('workbook.xslx');
                         <hr/>
                         <p>
                             <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example3Collapsible" aria-expanded="false"
@@ -322,8 +324,6 @@
                         worksheet.updateSharedFormula('(B3 + B4)', 'B5', 'C5');
                         workbook.download(fileName).then(function () {
                             $('#example4Collapsible').collapse('hide');
-                            $('#fileNameDownloaded').text(fileName);
-                            $('#exampleModal').modal('show');
                         });
                     }
                 </script>
@@ -338,7 +338,7 @@
                         <br/> worksheet.updateValuesInColumn([5, 9], 3, 2);
                         <br/> worksheet.updateValuesInColumn([7, 3], 3, 3);
                         <br/> worksheet.updateSharedFormula('(B3 + B4)', 'B5', 'C5');
-                        <br/> var workbook.download('workbook.xslx');
+                        <br/> workbook.download('workbook.xslx');
                         <hr/>
                         <p>
                             <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example4Collapsible" aria-expanded="false"
@@ -383,8 +383,6 @@
                         worksheet.updateSharedFormula('(G5 / E5) * 100', 'H5', 'H6');
                         workbook.download(fileName).then(function () {
                             $('#example5Collapsible').collapse('hide');
-                            $('#fileNameDownloaded').text(fileName);
-                            $('#exampleModal').modal('show');
                         });
                     }
                 </script>
@@ -402,7 +400,7 @@
                         <br/> worksheet.updateSharedFormula('(F5 - E5)', 'G5', 'G6');
                         <br/> worksheet.updateSharedFormula('(E5 + E6)', 'E7', 'F7');
                         <br/> worksheet.updateSharedFormula('(G5 / E5) * 100', 'H5', 'H6');
-                        <br/> var workbook.download('workbook.xslx');
+                        <br/> workbook.download('workbook.xslx');
                         <hr/>
                         <p>
                             <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example5Collapsible" aria-expanded="false"
@@ -419,26 +417,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">File Downloaded</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <span id="fileNameDownloaded"></span> successfully downloaded.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
