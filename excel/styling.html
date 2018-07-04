@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="OXML.JS implementation examples to export or create open xml documents">
+	<meta name="keywords" content="Export grid, export documents, xlsx, docx, xlsx creator js, oxml document creator, oxml exporter">
+	<meta name="author" content="Jitesh Kumawat">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+	<title>OXML.JS implementation examples to export or create open xml documents</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+	 crossorigin="anonymous">
+	<link href="../styles/style.css" rel="stylesheet" type="text/css">
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+	 crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+	 crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+	 crossorigin="anonymous"></script>
+	<script src="../scripts/fileSaver.min.js"></script>
+	<script src="../scripts/jszip.min.js"></script>
+	<script src="../scripts/oxml.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('.file-collapse').on('shown.bs.collapse', function () {
+				$(this).find('input').focus();
+			});
+
+			if (window.location.hash && window.location.hash === '#read') {
+				// smooth scroll to the anchor id
+				$('html,body').scrollTop($(".container").offset().top);
+			}
+		});
+	</script>
+</head>
+
+<body>
+	<div class="parallax">
+		<div class="scroll-title">SCROLL DOWN</div>
+	</div>
+
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+			<a class="navbar-brand" href="#">OXML.JS</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+			 aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="../index.html#read" id="installation" role="button">
+							Setup
+						</a>
+					</li>
+					<li class="nav-item dropdown active">
+						<a class="nav-link dropdown-toggle" href="#" id="excelDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+						 aria-expanded="false">
+							<i class="fa fa-file-excel-o" aria-hidden="true"></i>
+							Excel
+						</a>
+						<div class="dropdown-menu" aria-labelledby="excelDropdown">
+							<a class="dropdown-item" href="./basic.html#read">Basic Usage</a>
+							<a class="dropdown-item active" href="./styling.html#read">Styling</a>
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle disabled" href="#" id="documentDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+						 aria-expanded="false">
+							<i class="fa fa-file-word-o" aria-hidden="true"></i>
+							Document
+						</a>
+						<div class="dropdown-menu" aria-labelledby="documentDropdown">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="#">Something else here</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		<nav aria-label="breadcrumb" class="bg-dark">
+			<ol class="breadcrumb bg-dark">
+				<li class="breadcrumb-item breadcrumb-link" style="color: #ffffff">
+					<a href="../index.html#read">Home</a>
+				</li>
+				<li class="breadcrumb-item breadcrumb-link-disabled" style="color: #cfcfcf">
+					<a>Excel</a>
+				</li>
+				<li class="breadcrumb-item active breadcrumb-link" aria-current="page" style="color: #ffffff">
+					<a href="./styling.html#read">Styling</a>
+				</li>
+			</ol>
+		</nav>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-dark">
+				Styling with updateValueInCell
+			</div>
+		</div>
+
+		<div class="row justify-content-md-center">
+			<div class="col">
+				To provide styling user have to pass as optional parameter to updateValueInCell method. This optional parameter define styling
+				with some predefined properties as explained above.
+			</div>
+		</div>
+
+		<script>
+			onExample1Click = function () {
+				var fileName = $('#example1File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.createXLSX();
+				var worksheet = workbook.addSheet('sheet1');
+				var normalStyle = {
+					fontName: 'Arial',
+					fontSize: 10,
+					numberFormat: '#,##0.00'
+				};
+				var headerStyle = {
+					fill: {
+						pattern: 'solid',
+						foreColor: '090A0C'
+					},
+					fontColor: 'ffffff',
+					bold: true,
+					border: {
+						color: 'ffff00',
+						style: 'double',
+						right: {
+							style: 'none'
+						},
+						left: {
+							style: 'none'
+						}
+					}
+				};
+				var totalCellsStyle = {
+					fill: {
+						pattern: 'solid',
+						foreColor: '090A0C'
+					},
+					fontColor: 'ffffff',
+					border: {
+						color: 'ffff00',
+						style: 'double',
+						top: {
+							style: 'none'
+						},
+						bottom: {
+							style: 'none'
+						}
+					}
+				}
+				worksheet.updateValueInCell(null, 1, 1);
+				worksheet.updateValueInCell({ type: 'string', value: 'Data 1' }, 1, 2, headerStyle);
+				worksheet.updateValueInCell('Data 2', 1, 3, headerStyle);
+				worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 1, 4, headerStyle);
+				worksheet.updateValueInCell(undefined, 2, 1);
+				worksheet.updateValueInCell({ type: "numeric", value: 5 }, 2, 2, normalStyle);
+				worksheet.updateValueInCell(9, 2, 3, normalStyle);
+				worksheet.updateValueInCell({ type: 'formula', formula: '(B2 + C2)', value: 14 }, 2, 4, normalStyle);
+				worksheet.updateValueInCell(null, 3, 1);
+				worksheet.updateValueInCell(7, 3, 2, normalStyle);
+				worksheet.updateValueInCell(3, 3, 3, normalStyle);
+				worksheet.updateValueInCell({ type: 'formula', formula: '(B3 + C3)', value: 10 }, 3, 4, normalStyle);
+				worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 4, 1, {
+					fill: {
+						pattern: 'solid',
+						foreColor: '090A0C'
+					},
+					fontColor: 'ffffff',
+					bold: true,
+					border: {
+						color: 'ffff00',
+						style: 'double',
+						right: {
+							style: 'none'
+						}
+					}
+				});
+				worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
+				var totalCells = worksheet.getRow(4, 2, 3);
+				totalCells.style({
+					fill: {
+						pattern: 'solid',
+						foreColor: '090A0C'
+					},
+					fontColor: 'ffffff',
+					border: {
+						color: 'ffff00',
+						style: 'double',
+						right: {
+							style: 'none'
+						},
+						left: {
+							style: 'none'
+						}
+					},
+					numberFormat: '#,##0.00'
+				});
+				worksheet.getCell(4, 4)
+					.style({
+						border: {
+							right: {
+								color: 'ffff00',
+								style: 'double'
+							},
+							top: {
+								style: 'none'
+							}
+						}
+					});
+				worksheet.getRange(2, 4, 2, 1)
+					.style(totalCellsStyle);
+				worksheet.getCell(1, 2)
+					.style({
+						border: {
+							left: {
+								color: 'ffff00',
+								style: 'double'
+							}
+						}
+					});
+				worksheet.getCell(1, 4)
+					.style({
+						border: {
+							right: {
+								color: 'ffff00',
+								style: 'double'
+							},
+							bottom: {
+								style: 'none'
+							}
+						}
+					});
+				workbook.download(fileName).then(function () {
+					$('#example1Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.createXLSX();
+				<br/>var worksheet = workbook.addSheet('sheet1');
+				<br/>var normalStyle = {
+				<br/>&ensp; fontName: 'Arial',
+				<br/>&ensp;fontSize: 10,
+				<br/>&ensp;numberFormat: '#,##0.00'
+				<br/>};
+				<br/>var headerStyle = {
+				<br/>&ensp;fill: {
+				<br/>&ensp;&ensp;pattern: 'solid',
+				<br/>&ensp;&ensp;foreColor: '090A0C'
+				<br/>&ensp;},
+				<br/>&ensp;fontColor: 'ffffff',
+				<br/>&ensp;bold: true,
+				<br/>&ensp;border: {
+				<br/>&ensp;&ensp;color: 'ffff00',
+				<br/>&ensp;&ensp;style: 'double',
+				<br/>&ensp;&ensp;right: { style: 'none' },
+				<br/>&ensp;&ensp;left: { style: 'none' }
+				<br/>&ensp;}
+				<br/>};
+				<br/>var totalCellsStyle = {
+				<br/>&ensp;fill: {
+				<br/>&ensp;&ensp;pattern: 'solid',
+				<br/>&ensp;&ensp;foreColor: '090A0C'
+				<br/>&ensp;},
+				<br/>&ensp;fontColor: 'ffffff',
+				<br/>&ensp;border: {
+				<br/>&ensp;&ensp;color: 'ffff00',
+				<br/>&ensp;&ensp;style: 'double',
+				<br/>&ensp;&ensp;top: { style: 'none' },
+				<br/>&ensp;&ensp;bottom: { style: 'none' }
+				<br/>&ensp;}
+				<br/>}
+				<br/>worksheet.updateValueInCell(null, 1, 1);
+				<br/>worksheet.updateValueInCell({ type: 'string', value: 'Data 1' }, 1, 2, headerStyle);
+				<br/>worksheet.updateValueInCell('Data 2', 1, 3, headerStyle);
+				<br/>worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 1, 4, headerStyle);
+				<br/>worksheet.updateValueInCell(undefined, 2, 1);
+				<br/>worksheet.updateValueInCell({ type: "numeric", value: 5 }, 2, 2, normalStyle);
+				<br/>worksheet.updateValueInCell(9, 2, 3, normalStyle);
+				<br/>worksheet.updateValueInCell({ type: 'formula', formula: '(B2 + C2)', value: 14 }, 2, 4, normalStyle);
+				<br/>worksheet.updateValueInCell(null, 3, 1);
+				<br/>worksheet.updateValueInCell(7, 3, 2, normalStyle);
+				<br/>worksheet.updateValueInCell(3, 3, 3, normalStyle);
+				<br/>worksheet.updateValueInCell({ type: 'formula', formula: '(B3 + C3)', value: 10 }, 3, 4, normalStyle);
+				<br/>worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 4, 1, {
+				<br/>&ensp;fill: {
+				<br/>&ensp;&ensp;pattern: 'solid',
+				<br/>&ensp;&ensp;foreColor: '090A0C'
+				<br/>&ensp;},
+				<br/>&ensp;fontColor: 'ffffff',
+				<br/>&ensp;bold: true,
+				<br/>&ensp;border: {
+				<br/>&ensp;&ensp;color: 'ffff00',
+				<br/>&ensp;&ensp;style: 'double',
+				<br/>&ensp;&ensp;right: { style: 'none' }
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
+				<br/>var totalCells = worksheet.getRow(4, 2, 3);
+				<br/>totalCells.style({
+				<br/>&ensp;fill: {
+				<br/>&ensp;&ensp;pattern: 'solid',
+				<br/>&ensp;&ensp;foreColor: '090A0C'
+				<br/>&ensp;},
+				<br/>&ensp;fontColor: 'ffffff',
+				<br/>&ensp;border: {
+				<br/>&ensp;&ensp;color: 'ffff00',
+				<br/>&ensp;&ensp;style: 'double',
+				<br/>&ensp;&ensp;right: { style: 'none' },
+				<br/>&ensp;&ensp;left: { style: 'none' }
+				<br/>&ensp;},
+				<br/>&ensp;numberFormat: '#,##0.00'
+				<br/>});
+				<br/>worksheet.getCell(4, 4)
+				<br/>&ensp;.style({
+				<br/>&ensp;&ensp;border: {
+				<br/>&ensp;&ensp;&ensp;right: { color: 'ffff00', style: 'double' },
+				<br/>&ensp;&ensp;&ensp;top: { style: 'none' }
+				<br/>&ensp;&ensp;}
+				<br/>&ensp;});
+				<br/>worksheet.getRange(2, 4, 2, 1).style(totalCellsStyle);
+				<br/>worksheet.getCell(1, 2)
+				<br/>&ensp;.style({
+				<br/>&ensp;&ensp;border: {
+				<br/>&ensp;&ensp;&ensp;left: { color: 'ffff00', style: 'double' }
+				<br/>&ensp;&ensp;}
+				<br/>&ensp;});
+				<br/>worksheet.getCell(1, 4)
+				<br/>&ensp;.style({
+				<br/>&ensp;&ensp;border: {
+				<br/>&ensp;&ensp;&ensp;right: { color: 'ffff00', style: 'double' },
+				<br/>&ensp;&ensp;bottom: { style: 'none' }
+				<br/>&ensp;&ensp;}
+				<br/>&ensp;});
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example1Collapsible" aria-expanded="false"
+					 aria-controls="example1Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example1Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example1File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample1Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-dark">
+				Styling with updateValueInRow
+			</div>
+		</div>
+
+		<div class="row justify-content-md-center">
+			<div class="col">
+				To provide styling user have to pass as optional parameter to updateValueInRow method. This optional parameter define styling
+				with some predefined properties as explained above.
+			</div>
+		</div>
+
+		<script>
+			onExample2Click = function () {
+				var fileName = $('#example2File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.createXLSX();
+				var worksheet = workbook.addSheet('sheet1');
+				worksheet.updateValuesInRow('Total of Data', 1, 1, {
+					fill: {
+						gradient: {
+							degree: 90,
+							stops: [{
+								position: 0,
+								color: 'FF92D050'
+							},
+							{
+								position: 1,
+								color: 'FF0070C0'
+							}]
+						}
+					},
+					fontColor: 'ffffff',
+					bold: true,
+					underline: true
+				});
+				worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2, {
+					bold: true,
+					italic: true,
+					underline: true,
+					fontName: 'Calibri Light',
+					fontColor: '0000ff'
+				});
+				worksheet.updateValuesInRow([5, 9], 3, 2);
+				worksheet.updateValuesInRow([null, 7, 3], 4);
+				worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4', {
+					bold: true
+				});
+				workbook.download(fileName).then(function () {
+					$('#example2Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+					var workbook = oxml.createXLSX();
+					<br/>var worksheet = workbook.addSheet('sheet1');
+					<br/>worksheet.updateValuesInRow('Total of Data', 1, 1, {
+						<br/>&ensp;fill: {
+							<br/>&ensp;&ensp;gradient: {
+								<br/>&ensp;&ensp;&ensp;degree: 90,
+								<br/>&ensp;&ensp;&ensp;stops: [{
+									<br/>&ensp;&ensp;&ensp;&ensp;position: 0,
+									<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF92D050'
+								<br/>&ensp;&ensp;&ensp;},
+								<br/>&ensp;&ensp;&ensp;{
+									<br/>&ensp;&ensp;&ensp;&ensp;position: 1,
+									<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF0070C0'
+								<br/>&ensp;&ensp;&ensp;}]
+							<br/>&ensp;&ensp;}
+						<br/>&ensp;},
+						<br/>&ensp;fontColor: 'ffffff',
+						<br/>&ensp;bold: true,
+						<br/>&ensp;underline: true
+					<br/>});
+					<br/>worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2, {
+						<br/>&ensp;bold: true,
+						<br/>&ensp;italic: true,
+						<br/>&ensp;underline: true,
+						<br/>&ensp;fontName: 'Calibri Light',
+						<br/>&ensp;fontColor: '0000ff'
+					<br/>});
+					<br/>worksheet.updateValuesInRow([5, 9], 3, 2);
+					<br/>worksheet.updateValuesInRow([null, 7, 3], 4);
+					<br/>worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4', { bold: true });
+					<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example2Collapsible" aria-expanded="false"
+					 aria-controls="example2Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example2Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example2File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample2Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<nav aria-label="footer-navigation">
+			<ul class="pagination justify-content-center">
+				<li class="page-item">
+					<a class="page-link" href="../index.html#read" tabindex="-1">Back</a>
+				</li>
+				<li class="page-item">
+					<a class="page-link" href="../index.html#read" tabindex="-1">Home</a>
+				</li>
+				<li class="page-item">
+					<a class="page-link" href="./basic.html#read">Excel - Basic Usage</a>
+				</li>
+				<li class="page-item active">
+					<a class="page-link" href="./styling.html#read">Excel - Styles</a>
+				</li>
+				<li class="page-item disabled">
+					<a class="page-link" href="#">OXML - Document</a>
+				</li>
+				<li class="page-item disabled">
+					<a class="page-link" href="./basic.html#read">Next</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</body>
+
+</html>
