@@ -99,6 +99,217 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-dark">
+				Styling Excel
+			</div>
+		</div>
+
+		<div class="row justify-content-md-center">
+			<div class="col">
+				<p>
+					Excel cells can be styled using a JSON object parameter while filling up the cell values or with getCell and getRange methods.
+					Let us see working of getCell and getRange methods first. To get a reference of a cell user can use getCell method,
+					the output of this method let user see value of the cell or style the cell. This method can be chained with style method
+					for styling cells. Similar to getCell, oxml.js also provide getRange method which let user style a range of cells. However,
+					this method does not allow let user know the value of cells. We will understand more these method in below example.
+				</p>
+				<p>
+					For styling user have to use a JSON object with some predefined attributes. This JSON can be used with different methods
+					for filling the value or get cell / range reference. While filling the values this is an additional parameter passed
+					to any of the methods used. Methods supporting styling while filling the values are:
+					<br/>
+					<ul>
+						<li>updateValueInCell</li>
+						<li>updateValuesInColumn</li>
+						<li>updateValuesInRow</li>
+						<li>updateValuesInMatrix</li>
+						<li>updateSharedFormula</li>
+					</ul>
+					They all take an additional parameter as expalined in below examples for cell and row, although similar implementation can
+					be obtained in all the methods. Appart from passing the JSON object while filling the value, user can also chain a style
+					method just like getCell and getRange to the output of all above methods. The JSON object which can be passed for styling
+					can have following attributes:
+					<br/>
+					<ul>
+						<li>
+							<b>bold</b> will format the font in cell to bold/emphasize content.</li>
+						<li>
+							<b>italic</b> will format the font in cell to italic content.</li>
+						<li>
+							<b>underline</b> will format the font in cell to underline content.</li>
+						<li>
+							<b>strike</b> will format the font in cell to strike content.</li>
+						<li>
+							<b>fontSize</b> will change the font size of content.</li>
+						<li>
+							<b>fontColor</b> will change the font color of content. This attribute only support RBG values in string format.</li>
+						<li>
+							<b>fontName</b> will change the font name.</li>
+						<li>
+							<b>fontFamily</b> will change the font family.</li>
+						<li>
+							<b>scheme</b> will change the font scheme.</li>
+						<li>
+							<b>numberFormat</b> will format the numeric content. Some of the standard defined numeric formats are "mm-dd-yy"; "m/d/yy
+							h:mm"; "#,##0 ;(#,##0)"; "#,##0 ;[Red](#,##0)"; "#,##0.00;(#,##0.00)"; "#,##0.00;[Red](#,##0.00)"; "mmss.0"; "yyyy-mm-dd".
+							For more number format expressions, refer open xml documentation.</li>
+						<li>
+							<b>border</b> will format the border of the cell. This attribute is again a JSON object. If color and style of border
+							is defined than all the borders of cell will be updated. Appart from this user may provide a specific border for left,
+							right, top, bottom and diagonal with some specific value. eg.
+							<i>border: {color: "ff0000", style: "thick"}</i> will update all the borders and
+							<i>border: {right: {color: "ff0000", style: "thick"}}</i> will update just the right border. User can provide combination
+							of both the methods. Refer below examples for more details.
+						</li>
+						<li>
+							<b>fill</b> will format the fill / color of cell. This attribute is again a JSON object. Fill may be used with pattern
+							or gradient options. For using pattern, user defined pattern attribute, foreColor and backColor. pattern is a string
+							value of pattern used in excel, foreColor and backColor are string values of RGB colors. For using gradient, user
+							define gradient with child attributes degree, bottom, left, right, top, type, and stops. degree, bottom, left, right,
+							top, and type are values of gradient fill used in excel. stops is the array object with defined position and color
+							attribute. color of a stop is again RGB value. Refer open xml documentation for details on providing gradient and
+							pattern fills.</li>
+					</ul>
+				</p>
+			</div>
+		</div>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-dark">
+				Styling with getCell
+			</div>
+		</div>
+
+		<div class="row justify-content-md-center">
+			<div class="col">
+				getCell let user take a reference to cell and update style or get it's value. This method can be chained with style method
+				for styling a cell. This method takes tow arguments rowIndex, and columnIndex, which are 1 based index of row and column
+				to select the cell.
+			</div>
+		</div>
+
+		<script>
+			onExample3Click = function () {
+				var fileName = $('#example3File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.createXLSX();
+				var worksheet = workbook.addSheet('sheet1');
+				worksheet.updateValueInCell('Hello World!', 2, 2);
+				worksheet
+					.getCell(2, 2)
+					.style({
+						bold: true
+					});
+				workbook.download(fileName).then(function () {
+					$('#example3Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.createXLSX();
+				<br/>var worksheet = workbook.addSheet('sheet1');
+				<br/>worksheet.updateValueInCell('Hello World!', 2, 2);
+				<br/>worksheet.getCell(2, 2).style({ bold: true });
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example3Collapsible" aria-expanded="false"
+					 aria-controls="example3Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example3Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example3File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample3Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-dark">
+				Styling with getRange
+			</div>
+		</div>
+
+		<div class="row justify-content-md-center">
+			<div class="col">
+				getRange let user take a reference to cells and update it's style. This method can be chained with style method for styling
+				a collection of cells. This method takes 4 required parameters rowIndex, columnIndex, numberOfRows, and numberOfColumns.
+				<ul>
+					<li>
+						<b>rowIndex</b> is the 1 based index of row from where to start selection.</li>
+					<li>
+						<b>columnIndex</b> is the 1 based index of column from where to start selection.</li>
+					<li>
+						<b>numberOfRows</b> is the total number of rows to select, with minimum value of 1.</li>
+					<li>
+						<b>numberOfColumns</b> is the total number of columns to select, with minimum value of 1.</li>
+				</ul>
+			</div>
+		</div>
+
+		<script>
+			onExample4Click = function () {
+				var fileName = $('#example4File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.createXLSX();
+				var worksheet = workbook.addSheet('sheet1');
+				worksheet
+					.getRange(2, 2, 3, 1)
+					.style({
+						fill: {
+							pattern: 'solid',
+							foreColor: '00ff00'
+						}
+					});
+				workbook.download(fileName).then(function () {
+					$('#example4Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.createXLSX();
+				<br/>var worksheet = workbook.addSheet('sheet1');
+				<br/>worksheet
+				<br/>.getRange(2, 2, 3, 1)
+				<br/>.style({
+					<br/>&ensp;fill: {
+						<br/>&ensp;&ensp;pattern: 'solid',
+						<br/>&ensp;&ensp;foreColor: '00ff00'
+						<br/>&ensp;}
+				<br/>});
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example4Collapsible" aria-expanded="false"
+					 aria-controls="example4Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example4Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example4File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample4Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-dark">
 				Styling with updateValueInCell
 			</div>
 		</div>
@@ -363,7 +574,6 @@
 			</div>
 		</div>
 
-
 		<div style="margin-top: 25px;">
 			<div class="alert alert-dark">
 				Styling with updateValueInRow
@@ -423,37 +633,37 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-light">
-					var workbook = oxml.createXLSX();
-					<br/>var worksheet = workbook.addSheet('sheet1');
-					<br/>worksheet.updateValuesInRow('Total of Data', 1, 1, {
-						<br/>&ensp;fill: {
-							<br/>&ensp;&ensp;gradient: {
-								<br/>&ensp;&ensp;&ensp;degree: 90,
-								<br/>&ensp;&ensp;&ensp;stops: [{
-									<br/>&ensp;&ensp;&ensp;&ensp;position: 0,
-									<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF92D050'
-								<br/>&ensp;&ensp;&ensp;},
-								<br/>&ensp;&ensp;&ensp;{
-									<br/>&ensp;&ensp;&ensp;&ensp;position: 1,
-									<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF0070C0'
-								<br/>&ensp;&ensp;&ensp;}]
-							<br/>&ensp;&ensp;}
-						<br/>&ensp;},
-						<br/>&ensp;fontColor: 'ffffff',
-						<br/>&ensp;bold: true,
-						<br/>&ensp;underline: true
-					<br/>});
-					<br/>worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2, {
-						<br/>&ensp;bold: true,
-						<br/>&ensp;italic: true,
-						<br/>&ensp;underline: true,
-						<br/>&ensp;fontName: 'Calibri Light',
-						<br/>&ensp;fontColor: '0000ff'
-					<br/>});
-					<br/>worksheet.updateValuesInRow([5, 9], 3, 2);
-					<br/>worksheet.updateValuesInRow([null, 7, 3], 4);
-					<br/>worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4', { bold: true });
-					<br/>workbook.download('workbook.xslx');
+				var workbook = oxml.createXLSX();
+				<br/>var worksheet = workbook.addSheet('sheet1');
+				<br/>worksheet.updateValuesInRow('Total of Data', 1, 1, {
+				<br/>&ensp;fill: {
+				<br/>&ensp;&ensp;gradient: {
+				<br/>&ensp;&ensp;&ensp;degree: 90,
+				<br/>&ensp;&ensp;&ensp;stops: [{
+				<br/>&ensp;&ensp;&ensp;&ensp;position: 0,
+				<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF92D050'
+				<br/>&ensp;&ensp;&ensp;},
+				<br/>&ensp;&ensp;&ensp;{
+				<br/>&ensp;&ensp;&ensp;&ensp;position: 1,
+				<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF0070C0'
+				<br/>&ensp;&ensp;&ensp;}]
+				<br/>&ensp;&ensp;}
+				<br/>&ensp;},
+				<br/>&ensp;fontColor: 'ffffff',
+				<br/>&ensp;bold: true,
+				<br/>&ensp;underline: true
+				<br/>});
+				<br/>worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2, {
+				<br/>&ensp;bold: true,
+				<br/>&ensp;italic: true,
+				<br/>&ensp;underline: true,
+				<br/>&ensp;fontName: 'Calibri Light',
+				<br/>&ensp;fontColor: '0000ff'
+				<br/>});
+				<br/>worksheet.updateValuesInRow([5, 9], 3, 2);
+				<br/>worksheet.updateValuesInRow([null, 7, 3], 4);
+				<br/>worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4', { bold: true });
+				<br/>workbook.download('workbook.xslx');
 				<hr/>
 				<p>
 					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example2Collapsible" aria-expanded="false"
