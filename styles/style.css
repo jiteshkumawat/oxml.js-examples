@@ -40,6 +40,50 @@ body, html {
     cursor: default;
 }
 
+.breadcrumb-link > a:link{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.breadcrumb-link > a:visited{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.breadcrumb-link > a:hover{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.breadcrumb-link > a:active{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.breadcrumb-link-disabled > a:link{
+    color: #cfcfcf;
+    text-decoration: none;
+    cursor: default;
+}
+
+.breadcrumb-link-disabled > a:visited{
+    color: #cfcfcf;
+    text-decoration: none;
+    cursor: default;
+}
+
+.breadcrumb-link-disabled > a:hover{
+    color: #cfcfcf;
+    text-decoration: none;
+    cursor: default;
+}
+
+.breadcrumb-link-disabled > a:active{
+    color: #cfcfcf;
+    text-decoration: none;
+    cursor: default;
+}
+
 @media only screen and (max-device-width: 1366px) {
     .parallax {
         background-attachment: scroll;
