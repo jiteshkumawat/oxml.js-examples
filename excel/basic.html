@@ -105,8 +105,15 @@
 
         <div class="row justify-content-md-center">
             <div class="col">
-                To work with workbook documents, instance of workbook / worksheets should be created. Any operation can further be performed
-                on these document objects.
+                To create a workbook, oxml.js expose xlsx method. This method does not take any argument and the output of this method is
+                a new workbook object to work with. This object have a method “worksheet()”, which facilitate creating /
+                adding a worksheet to workbook. A workbook can have multiple worksheets and these worksheets can be identified
+                by a unique name. Thus, this worksheet method requires a string parameter, i.e., worksheetName. Worksheet
+                method returns an object with lots of methods, which we will go through later. Another method exposed in
+                workbook object is download. “download()” method let user export or save workbook file created with oxml.js.
+                Again, just like worksheet() method, download() also takes a string argument “fileName”. download() method
+                returns a promise object, or it may also used with an additional parameter, i.e., a callback method to execute
+                when download is complete.
             </div>
         </div>
 
@@ -116,8 +123,8 @@
                 if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
                     fileName += '.xlsx';
                 }
-                var workbook = oxml.createXLSX();
-                var worksheet = workbook.addSheet('sheet1');
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
                 workbook.download(fileName).then(function () {
                     $('#example1Collapsible').collapse('hide');
                 });
@@ -126,8 +133,8 @@
 
         <div style="margin-top: 25px;">
             <div class="alert alert-light">
-                var workbook = oxml.createXLSX();
-                <br/> var worksheet = workbook.addSheet('sheet1');
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
                 <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
                 <hr/>
                 <p>
@@ -149,289 +156,271 @@
 
         <div style="margin-top: 25px;">
             <div class="alert alert-dark">
-                Fill values in sheets
+                Values
             </div>
         </div>
 
         <div class="row justify-content-md-center">
             <div class="col">
-                <h4>Values</h4>
-                Values in worksheet can be of different types. These values can be filled in cell, rows, column, or a matrix of rows and
-                column. Value defined to be filled in worksheet may be of following types:
+                Values as the name suggest are JSON object representation of value to be filled in each cell. User can define or get value
+                of cell in these format. A value JSON object have attributes varying on value type. Oxml.JS Excel supports
+                4 different types of values to be filled in cells.
+                <br/>
+                <br/>
                 <ul>
-                    <li>String Values: String values are represented by javascript string literals. String values can be provided
-                        for cell using string literal or JSON object with type set as string. A JSON string value should
-                        have attributes value and type defined. String are usually defined as inline string in worksheet.</li>
-                    <li>Numeric Values: Numeric values are represented by javascript number literals. Numeric values can be provided
-                        for cell using number literal or JSON object with type set as numeric. A JSON numeric value should
-                        have attributes value and type defined.</li>
-                    <li>Blank Values: Cell can be left blank by passing null or undefined javascript values.</li>
-                    <li>Shared String: Shared string are represented by JSON object, with type attribute defined as sharedString.
-                        A shared string JSON should have attributes type and value defined.</li>
-                    <li>Formula: Formulas are represented by JSON object, with type attribute defined as formula. A formula type
-                        of value should be defined with attributes type and formula defined. Formula attribute stores the
-                        formula used to calculate cell value, this can be reffered as formula defined in formula bar of any
-                        workbook processing application like Microsoft Excel. If an additional attribute value is defined,
-                        this value will be used as cached value for formula cell.</li>
-                    <li>Shared Formula: Shared Formulas can be filled using special method available to worksheet object, updateSharedFormula.
-                        This method is described well below.</li>
+                    <li>String Values: Strings have two defined attributes, i.e., type and value. A JSON object with type set
+                        to "string" represents string value. Usually when you style a cell which do not have defined value.
+                        OXML.JS automatically sets it's value to string type with blank value. User can also define a string
+                        value with javascript string literals rather than defining the JSON object. In Excel, string type
+                        of value is defined as inline string. Some of the examples of string values are:
+                        <br/>
+                        <br/>{type: "string", value: "Hello World"}; {type: "string", value: ""}; "Hello World"; "";
+                        <br/>
+                        <br/>
+                    </li>
+                    <li>Numeric Values: Numbers again have two defined attributes, i.e., type and value. A JSON object type as
+                        "numeric" represents numeric value. User can also define numeric value with javascript numeric literals
+                        rather than defining the JSON object. Some of the examples of numeric values are:
+                        <br/>
+                        <br/>{type: "numeric", value: 9}; {type: "numeric", value: 0}; 9; 0;
+                        <br/>
+                        <br/>
+                    </li>
+                    <li>Shared String: Shared String: Shared strings are special type of string values which are usually used
+                        for repeated strings in Excel. They are optimal way to save string with multiple occurrence in Excel.
+                        A JSON object with type set as "sharedString". The only way to represent shared strings is:
+                        <br/>
+                        <br/>{type: "sharedString", value: "Total"};
+                        <br/>
+                        <br/>
+                    </li>
+                    <li>Formula: Formulas are calculated values using other cells. They can be defined with JSON object type
+                        set as "formula”". Unlike numbers and strings, formula is defined using attribute "formula" of JSON.
+                        This value is same as the value defined in formula bar. An additional attribute "value" is used to
+                        define cached result of calculated value. Some applications use this cached value when document is
+                        opened in read only mode. Formula when defined with cell is saved as single cell formula and when
+                        defined with row, or column formula is saved as shared formula. Some of the example of defining formula
+                        are:
+                        <br/>
+                        <br/>{type: "formula", formula: "A1+D4"}; {type: "formula", formula: "(A2-A1) * A3", value: 30};
+                        <br/>
+                        <br/>
+                    </li>
                 </ul>
-                <h5>updateSharedFormula</h5>
-                <p>
-                    updateSharedFormula is used to define a shared formula among range of cells or column. They are an optimized way to define
-                    formula in range of cells of worksheet. This method is available with instance of worksheet type of object.
-                    This method takes three required variables, i.e, formula, start cell index, and end cell index. Here
-                    cell index is represented with column defined with character representation and row is defined with numeric
-                    representation just as any workbook application. eg. A1 represent the first cell, A2 represent the second
-                    cell in column, and B1 represent the second cell in row. Formula is defined just as any formula of formula
-                    bar. updateSharedFormula can be seen in different examples below.
-                </p>
-                All these values will be used to fill data in worksheet using below methods:
+            </div>
+        </div>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-dark">
+                Cell
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col">
+                Cell is a method available to worksheet object, they can be used to work with a single cell of worksheet. The behaviour of
+                this method depends on the parameters defined and passed. Two required parameters of cell method are rowIndex
+                and columnIndex. They should be strictly numeric and represent row or column starting from 1. A Cell method
+                with only rowIndex and columnIndex returns cell saved in worksheet of oxlx. User can get all details of cell
+                using this method, the output of cell method is JSON object with following attributes:
                 <br/>
                 <br/>
-                <h5>updateValueInCell</h5>
+                <ol>
+                    <li>
+                        <b>value:</b> This attribute represents the value saved in cell.</li>
+                    <li>
+                        <b>type:</b> This attribute represents the type of value in cell.</li>
+                    <li>
+                        <b>rowIndex:</b> rowIndex is represented with numeric value defined with 1 as first row, 2 as second
+                        row, and so on.</li>
+                    <li>
+                        <b>columnIndex:</b> columnIndex is represented with uppercase letter defined with ‘A’ as first column,
+                        ‘B’ as second column, and so on.
+                    </li>
+                    <li>
+                        <b>cellIndex:</b> This attribute represents the cell index. Cell Index is represented with column and
+                        row representation combined, i.e., ‘A1’ is defined as first cell of excel, ‘A2’ is defined as second
+                        cell of first column, ‘B1’ is defined as second cell of first row, and so on.
+                    </li>
+                    <li>
+                        <b>style():</b> This is a method available to define styling of the cell. Styling can be defined using
+                        JSON attribute explained later.
+                    </li>
+                    <li>
+                        <b>set():</b> This is a method available to set a value of the cell. Any value passed in this method
+                        is set on the cell. Value can be of any type as described above.
+                    </li>
+                </ol>
+                An example to get a cell, and set its value is:
+            </div>
+        </div>
+
+        <script>
+            onExample2Click = function () {
+                var fileName = $('#example2File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.cell(2, 3).set('Hello World');
+                workbook.download(fileName).then(function () {
+                    $('#example2Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.cell(2,3).set('Hello World');
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
                 <p>
-                    updateValueInCell is used to fill a value in single cell of worksheet. This method is available on instance of worksheet
-                    type of object. updateValueInCell takes three arguments, i.e., value, rowIndex starting from 1, and column
-                    index starting from 1. Default value of columnIndex and rowIndex is 1. Value provided can be of any type
-                    explained above except shared formula. Below example describe updating values in cells of worksheet:
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example2Collapsible" aria-expanded="false"
+                        aria-controls="example2Collapsible">Execute</button>
                 </p>
-
-                <script>
-                    onExample2Click = function () {
-                        var fileName = $('#example2File').val();
-                        if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
-                            fileName += '.xlsx';
-                        }
-                        var workbook = oxml.createXLSX();
-                        var worksheet = workbook.addSheet('sheet1');
-                        worksheet.updateValueInCell(null, 1, 1);
-                        worksheet.updateValueInCell({ type: 'string', value: 'Data 1' }, 1, 2);
-                        worksheet.updateValueInCell('Data 2', 1, 3);
-                        worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 1, 4);
-                        worksheet.updateValueInCell(undefined, 2, 1);
-                        worksheet.updateValueInCell({ type: "numeric", value: 5 }, 2, 2);
-                        worksheet.updateValueInCell(9, 2, 3);
-                        worksheet.updateValueInCell({ type: 'formula', formula: '(B2 + C2)', value: 14 }, 2, 4);
-                        worksheet.updateValueInCell(null, 3, 1);
-                        worksheet.updateValueInCell(7, 3, 2);
-                        worksheet.updateValueInCell(3, 3, 3);
-                        worksheet.updateValueInCell({ type: 'formula', formula: '(B3 + C3)', value: 10 }, 3, 4);
-                        worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 4, 1);
-                        worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
-                        workbook.download(fileName).then(function () {
-                            $('#example2Collapsible').collapse('hide');
-                        });
-                    }
-                </script>
-
-                <div style="margin-top: 25px;">
-                    <div class="alert alert-light">
-                        var workbook = oxml.createXLSX();
-                        <br/> var worksheet = workbook.addSheet('sheet1');
-                        <br/> worksheet.updateValueInCell(null, 1, 1);
-                        <br/> worksheet.updateValueInCell({ type: 'string', value: 'Data 1' }, 1, 2);
-                        <br/> worksheet.updateValueInCell('Data 2', 1, 3);
-                        <br/> worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 1, 4);
-                        <br/> worksheet.updateValueInCell(undefined, 2, 1);
-                        <br/> worksheet.updateValueInCell({ type: "numeric", value: 5 }, 2, 2);
-                        <br/> worksheet.updateValueInCell(9, 2, 3);
-                        <br/> worksheet.updateValueInCell({ type: 'formula', formula: '(B2 + C2)', value: 14 }, 2, 4);
-                        <br/> worksheet.updateValueInCell(null, 3, 1);
-                        <br/> worksheet.updateValueInCell(7, 3, 2);
-                        <br/> worksheet.updateValueInCell(3, 3, 3);
-                        <br/> worksheet.updateValueInCell({ type: 'formula', formula: '(B3 + C3)', value: 10 }, 3, 4);
-                        <br/> worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 4, 1);
-                        <br/> worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
-                        <br/> workbook.download('workbook.xslx');
-                        <hr/>
-                        <p>
-                            <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example2Collapsible" aria-expanded="false"
-                                aria-controls="example2Collapsible">Execute</button>
-                        </p>
-                        <div class="collapse file-collapse" id="example2Collapsible">
-                            <div class="card card-body">
-                                <form class="input-group mb-3" onsubmit="return false;">
-                                    <input type="text" class="form-control" id="example2File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-success" type="submit" onclick="onExample2Click();">Download</button>
-                                    </div>
-                                </form>
+                <div class="collapse file-collapse" id="example2Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example2File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample2Click();">Download</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <h5>updateValuesInRow</h5>
+        <script>
+            onExample4Click = function () {
+                var fileName = $('#example4File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.cell(2, 3).set({value: 'Hello World', type: 'string'});
+                workbook.download(fileName).then(function () {
+                    $('#example4Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.cell(2, 3).set({value: 'Hello World', type: 'string'});
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
                 <p>
-                    updateValuesInRow method is used to fill values in a row of worksheet. This method is available on instance of worksheet
-                    type of object. updateValuesInRow takes three arguments, i.e., values array, rowIndex starting from 1
-                    and columnIndex starting from 1. Default value of columnIndex and rowIndex is 1. Values array is array
-                    representation of above value types. rowIndex and columnIndex define the position from where data will
-                    start filling in the cells. This method also takes single value, if it has to be filled in first column
-                    of the row only. Below example describe updating values in rows of worksheet:
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example4Collapsible" aria-expanded="false"
+                        aria-controls="example4Collapsible">Execute</button>
                 </p>
-                <script>
-                    onExample3Click = function () {
-                        var fileName = $('#example3File').val();
-                        if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
-                            fileName += '.xlsx';
-                        }
-                        var workbook = oxml.createXLSX();
-                        var worksheet = workbook.addSheet('sheet1');
-                        worksheet.updateValuesInRow('Total of Data', 1, 1)
-                        worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2);
-                        worksheet.updateValuesInRow([5, 9], 3, 2);
-                        worksheet.updateValuesInRow([null, 7, 3], 4);
-                        worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4');
-                        workbook.download(fileName).then(function () {
-                            $('#example3Collapsible').collapse('hide');
-                        });
-                    }
-                </script>
-
-                <div style="margin-top: 25px;">
-                    <div class="alert alert-light">
-                        var workbook = oxml.createXLSX();
-                        <br/> var worksheet = workbook.addSheet('sheet1');
-                        <br/> worksheet.updateValuesInRow('Total of Data', 1, 1)
-                        <br/> worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2);
-                        <br/> worksheet.updateValuesInRow([5, 9], 3, 2);
-                        <br/> worksheet.updateValuesInRow([null, 7, 3], 4);
-                        <br/> worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4');
-                        <br/> workbook.download('workbook.xslx');
-                        <hr/>
-                        <p>
-                            <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example3Collapsible" aria-expanded="false"
-                                aria-controls="example3Collapsible">Execute</button>
-                        </p>
-                        <div class="collapse file-collapse" id="example3Collapsible">
-                            <div class="card card-body">
-                                <form class="input-group mb-3" onsubmit="return false;">
-                                    <input type="text" class="form-control" id="example3File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-success" type="submit" onclick="onExample3Click();">Download</button>
-                                    </div>
-                                </form>
+                <div class="collapse file-collapse" id="example4Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example4File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample4Click();">Download</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <h5>updateValuesInColumn</h5>
+        <div class="row justify-content-md-center">
+            <div class="col">
+                Another usage of cell() is to set a value in excel workbook. Cell accepts additional parameters value and style to update
+                the selected cell. Or it may also be called without a value and just style object. Value object can also
+                be a javascript string literal, number literal, or it can be a JSON object with value and type defined. Style
+                will be explained later in examples. The only way by which oxml.js differentiate value and style is value
+                and type defined in JSON object. cell() returns JSON object with cell details as explained above. User can
+                update the value of cell later using set(), however this time set() will update the value. Therefore, a complete
+                syntax of cell method is:
+                <br/>
+                <br/> worksheet.cell(rowIndex, columnIndex, &lt;value&gt;, &lt;style&gt;);
+                <br/><br/>Example to use cell method to set a value:
+            </div>
+        </div>
+
+        <script>
+            onExample3Click = function () {
+                var fileName = $('#example3File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.cell(2, 3, 'Hello World');
+                workbook.download(fileName).then(function () {
+                    $('#example3Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.cell(2, 3, 'Hello World');
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
                 <p>
-                    updateValuesInColumn are just like updateValuesInRow, but they fill values in column of worksheet. It is also available on
-                    instance of worksheet type of object. Just like for rows, it takes three arguments, i.e, values, rowIndex
-                    and columnIndex. Default value of columnIndex and rowIndex is 1. Below example describe updating values
-                    in column of worksheet:
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example3Collapsible" aria-expanded="false"
+                        aria-controls="example3Collapsible">Execute</button>
                 </p>
-                <script>
-                    onExample4Click = function () {
-                        var fileName = $('#example4File').val();
-                        if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
-                            fileName += '.xlsx';
-                        }
-                        var workbook = oxml.createXLSX();
-                        var worksheet = workbook.addSheet('sheet1');
-                        worksheet.updateValuesInColumn('Total of Data', 1);
-                        worksheet.updateValuesInColumn([null, 'Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2);
-                        worksheet.updateValuesInColumn([5, 9], 3, 2);
-                        worksheet.updateValuesInColumn([7, 3], 3, 3);
-                        worksheet.updateSharedFormula('(B3 + B4)', 'B5', 'C5');
-                        workbook.download(fileName).then(function () {
-                            $('#example4Collapsible').collapse('hide');
-                        });
-                    }
-                </script>
-
-                <div style="margin-top: 25px;">
-                    <div class="alert alert-light">
-                        var workbook = oxml.createXLSX();
-                        <br/> var worksheet = workbook.addSheet('sheet1');
-                        <br/> worksheet.updateValuesInColumn('Total of Data', 1);
-                        <br/> worksheet.updateValuesInColumn([null, 'Data 1', 'Data 2', { type: 'sharedString', value: 'Total'
-                        }], 2);
-                        <br/> worksheet.updateValuesInColumn([5, 9], 3, 2);
-                        <br/> worksheet.updateValuesInColumn([7, 3], 3, 3);
-                        <br/> worksheet.updateSharedFormula('(B3 + B4)', 'B5', 'C5');
-                        <br/> workbook.download('workbook.xslx');
-                        <hr/>
-                        <p>
-                            <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example4Collapsible" aria-expanded="false"
-                                aria-controls="example4Collapsible">Execute</button>
-                        </p>
-                        <div class="collapse file-collapse" id="example4Collapsible">
-                            <div class="card card-body">
-                                <form class="input-group mb-3" onsubmit="return false;">
-                                    <input type="text" class="form-control" id="example4File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-success" type="submit" onclick="onExample4Click();">Download</button>
-                                    </div>
-                                </form>
+                <div class="collapse file-collapse" id="example3Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example3File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample3Click();">Download</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <h5>updateValuesInMatrix</h5>
+        <script>
+            onExample5Click = function () {
+                var fileName = $('#example5File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.cell(2, 3, {value: 'Hello World', type: 'string'});
+                workbook.download(fileName).then(function () {
+                    $('#example5Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.cell(2, 3, {value: 'Hello World', type: 'string'});
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
                 <p>
-                    updateValuesInMatrix is the much smarter way to fill values in worksheet. It again accepts three argument of two dimensional
-                    array with values defined in rows and column, rowIndex and columnIndex repectively. With a value[i][j]
-                    representation, i represent the row of value and j represent the column of value. This value can be of
-                    any type as described above. Below example describe updating values in rows and columns:
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example5Collapsible" aria-expanded="false"
+                        aria-controls="example5Collapsible">Execute</button>
                 </p>
-                <script>
-                    onExample5Click = function () {
-                        var fileName = $('#example5File').val();
-                        if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
-                            fileName += '.xlsx';
-                        }
-                        var workbook = oxml.createXLSX();
-                        var worksheet = workbook.addSheet('sheet1');
-                        worksheet.updateValuesInMatrix([
-                            [null, 'Sale Price', 'Cost Price', 'Profit', 'Profit%'],
-                            [null, 10, 14],
-                            [null, 11, 14],
-                            'Total'
-                        ], 4, 4);
-                        worksheet.updateSharedFormula('(F5 - E5)', 'G5', 'G6');
-                        worksheet.updateSharedFormula('(E5 + E6)', 'E7', 'F7');
-                        worksheet.updateSharedFormula('(G5 / E5) * 100', 'H5', 'H6');
-                        workbook.download(fileName).then(function () {
-                            $('#example5Collapsible').collapse('hide');
-                        });
-                    }
-                </script>
-
-                <div style="margin-top: 25px;">
-                    <div class="alert alert-light">
-                        var workbook = oxml.createXLSX();
-                        <br/> var worksheet = workbook.addSheet('sheet1');
-                        <br/> worksheet.updateValuesInMatrix([
-                        <br/> [null, 'Sale Price', 'Cost Price', 'Profit', 'Profit%'],
-                        <br/> [null, 10, 14],
-                        <br/> [null, 11, 14],
-                        <br/> 'Total'
-                        <br/> ], 4, 4);
-                        <br/> worksheet.updateSharedFormula('(F5 - E5)', 'G5', 'G6');
-                        <br/> worksheet.updateSharedFormula('(E5 + E6)', 'E7', 'F7');
-                        <br/> worksheet.updateSharedFormula('(G5 / E5) * 100', 'H5', 'H6');
-                        <br/> workbook.download('workbook.xslx');
-                        <hr/>
-                        <p>
-                            <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example5Collapsible" aria-expanded="false"
-                                aria-controls="example5Collapsible">Execute</button>
-                        </p>
-                        <div class="collapse file-collapse" id="example5Collapsible">
-                            <div class="card card-body">
-                                <form class="input-group mb-3" onsubmit="return false;">
-                                    <input type="text" class="form-control" id="example5File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-success" type="submit" onclick="onExample5Click();">Download</button>
-                                    </div>
-                                </form>
+                <div class="collapse file-collapse" id="example5Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example5File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample5Click();">Download</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
