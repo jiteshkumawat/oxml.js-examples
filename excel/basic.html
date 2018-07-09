@@ -302,7 +302,7 @@
                 }
                 var workbook = oxml.xlsx();
                 var worksheet = workbook.sheet('sheet1');
-                worksheet.cell(2, 3).set({value: 'Hello World', type: 'string'});
+                worksheet.cell(2, 3).set({ value: 'Hello World', type: 'string' });
                 workbook.download(fileName).then(function () {
                     $('#example4Collapsible').collapse('hide');
                 });
@@ -344,7 +344,8 @@
                 syntax of cell method is:
                 <br/>
                 <br/> worksheet.cell(rowIndex, columnIndex, &lt;value&gt;, &lt;style&gt;);
-                <br/><br/>Example to use cell method to set a value:
+                <br/>
+                <br/>Example to use cell method to set a value:
             </div>
         </div>
 
@@ -395,7 +396,7 @@
                 }
                 var workbook = oxml.xlsx();
                 var worksheet = workbook.sheet('sheet1');
-                worksheet.cell(2, 3, {value: 'Hello World', type: 'string'});
+                worksheet.cell(2, 3, { value: 'Hello World', type: 'string' });
                 workbook.download(fileName).then(function () {
                     $('#example5Collapsible').collapse('hide');
                 });
@@ -425,6 +426,158 @@
                 </div>
             </div>
         </div>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-dark">
+                Row
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col">
+                Row is another useful method exposed with worksheet object. As the name suggest this method let Tuser set value / style a
+                row in worksheet. Parameters passed to a row method are rowIndex, columnIndex, values and style. RowIndex
+                is the index of row starting from 1, and columnIndex is the index of column starting from 1, they indicate
+                the position of cell, from which to start filling the values. Ex, with rowIndex 3 and columnIndex 2, values
+                will be filled from cell B3 in a row. Values passed is an array collection of value type of objects, they
+                can be combination of different value types defined earlier. The last parameter passed, but not required,
+                is the style JSON value, which will be defined later. Syntax of row method is:
+                <br/>
+                <br/> worksheet.row(rowIndex, columnIndex, &lt;values&gt;, &lt;style&gt;);
+                <br/>
+                <br/>row() returns the JSON object with following attributes:
+                <br/>
+                <br/>
+                <ol>
+                    <li>
+                        <b>cellIndices:</b> This is the array collection of all the cell indices defined with row, these cell
+                        indices are same as defined in cell().</li>
+                    <li>
+                        <b>cells:</b> This is the array collection of all the cell defined with row.</li>
+                    <li>
+                        <b>style():</b> This method let user update the value defined with row(). This method accepts an argument
+                        values collection of value type JSON. set() will update only the cells present in cellIndices and
+                        cells array object.
+                    </li>
+                    <li>
+                        <b>set():</b> This method let user update the style of selected cells by row(), and cells present in
+                        cell array collection.
+                    </li>
+                </ol>
+                Example to use Row method to set values:
+            </div>
+        </div>
+
+        <script>
+            onExample6Click = function () {
+                var fileName = $('#example6File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.row(2, 3, ['Cost', 'Sale', 'Profit']);
+                worksheet.row(3, 3, [10, 12]);
+                worksheet.row(4, 3, [9, 12]);
+                worksheet.cell(3, 5, { type: 'formula', formula: '(D3 - C3)', value: 2 });
+                worksheet.cell(4, 5, { type: 'formula', formula: '(D4 - C4)', value: 3 });
+                worksheet.row(5, 2, [
+                    { type: 'sharedString', value: 'Total' },
+                    { type: 'formula', formula: '(C3 + C4)', value: 19 },
+                    { type: 'formula', formula: '(D3 + D4)', value: 24 }]);
+                workbook.download(fileName).then(function () {
+                    $('#example6Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.row(2, 3, ['Cost', 'Sale', 'Profit']);
+                <br/> worksheet.row(3, 3, [10, 12]);
+                <br/> worksheet.row(4, 3, [9, 12]);
+                <br/> worksheet.cell(3, 5, { type: 'formula', formula: '(D3 - C3)', value: 2 });
+                <br/> worksheet.cell(4, 5, { type: 'formula', formula: '(D4 - C4)', value: 3 });
+                <br/> worksheet.row(5, 2, [
+                <br/>&tbsp;{ type: 'sharedString', value: 'Total' },
+                <br/>&tbsp;{ type: 'formula', formula: '(C3 + C4)', value: 19 },
+                <br/> &tbsp;{ type: 'formula', formula: '(D3 + D4)', value: 24 }]);
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example6Collapsible" aria-expanded="false"
+                        aria-controls="example6Collapsible">Execute</button>
+                </p>
+                <div class="collapse file-collapse" id="example6Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example6File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample6Click();">Download</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col">
+                Another use of row() is to get a row defined in excel, however unlike cell, row() returns only cell which are already defined
+                or set. row() with parameters only rowIndex and columnIndex will return all the already defined cells in
+                row after rowIndex and columnIndex. This let user update or get reference to a row object. The output of
+                row() is similar to the cells attribute with setting the values, user can set or style the selected cells
+                with set() and style methods or row object.
+                <br/>
+                <br/>Examples to get row reference:
+            </div>
+        </div>
+
+        <script>
+            onExample7Click = function () {
+                var fileName = $('#example7File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.row(2, 3, ['Hello', 'World']);
+                var row = worksheet.row(2, 3);
+                row.set(['Greetings']);
+                workbook.download(fileName).then(function () {
+                    $('#example7Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.row(2, 3, ['Hello', 'Wold']);
+                <br/> var row = worksheet.row(2, 3);
+                <br/> row.set(['Greetings']);
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example7Collapsible" aria-expanded="false"
+                        aria-controls="example7Collapsible">Execute</button>
+                </p>
+                <div class="collapse file-collapse" id="example7Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example7File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample7Click();">Download</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <nav aria-label="footer-navigation">
             <ul class="pagination justify-content-center">
