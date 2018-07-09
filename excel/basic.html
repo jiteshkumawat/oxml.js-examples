@@ -578,6 +578,105 @@
             </div>
         </div>
 
+        <div style="margin-top: 25px;">
+            <div class="alert alert-dark">
+                Column
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col">
+                Just like row() we have another method with worksheet object, i.e., column(). As the name suggests column() selects cells
+                in a column of worksheet. Parameters passed in row() and column() are same and thus the output, the only
+                difference is the way they fill or select the cells. column() can be easily understood with below examples:
+            </div>
+        </div>
+        
+        <script>
+            onExample8Click = function () {
+                var fileName = $('#example8File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.column(2, 3, ['Cost', 'Sale', 'Profit']);
+                worksheet.column(2, 4, [9, 12, 3]);
+                worksheet.column(2, 5, [10, 12, 2]);
+                workbook.download(fileName).then(function () {
+                    $('#example8Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.column(2, 3, ['Cost', 'Sale', 'Profit']);
+                <br/> worksheet.column(2, 4, [9, 12, 3]);
+                <br/> worksheet.column(2, 5, [10, 12, 2]);
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example8Collapsible" aria-expanded="false"
+                        aria-controls="example8Collapsible">Execute</button>
+                </p>
+                <div class="collapse file-collapse" id="example8Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example8File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample8Click();">Download</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            onExample9Click = function () {
+                var fileName = $('#example9File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.column(2, 3, ['Hello', 'World']);
+                var column = worksheet.column(2, 3);
+                column.set(['Greetings']);
+                workbook.download(fileName).then(function () {
+                    $('#example9Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.column(2, 3, ['Hello', 'Wold']);
+                <br/> var column = worksheet.column(2, 3);
+                <br/> column.set(['Greetings']);
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example9Collapsible" aria-expanded="false"
+                        aria-controls="example9Collapsible">Execute</button>
+                </p>
+                <div class="collapse file-collapse" id="example9Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example9File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample9Click();">Download</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <nav aria-label="footer-navigation">
             <ul class="pagination justify-content-center">
