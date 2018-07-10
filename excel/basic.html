@@ -501,9 +501,9 @@
                 <br/> worksheet.cell(3, 5, { type: 'formula', formula: '(D3 - C3)', value: 2 });
                 <br/> worksheet.cell(4, 5, { type: 'formula', formula: '(D4 - C4)', value: 3 });
                 <br/> worksheet.row(5, 2, [
-                <br/>&tbsp;{ type: 'sharedString', value: 'Total' },
-                <br/>&tbsp;{ type: 'formula', formula: '(C3 + C4)', value: 19 },
-                <br/> &tbsp;{ type: 'formula', formula: '(D3 + D4)', value: 24 }]);
+                <br/>&emsp;{ type: 'sharedString', value: 'Total' },
+                <br/>&emsp;{ type: 'formula', formula: '(C3 + C4)', value: 19 },
+                <br/> &emsp;{ type: 'formula', formula: '(D3 + D4)', value: 24 }]);
                 <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
                 <hr/>
                 <p>
@@ -591,7 +591,7 @@
                 difference is the way they fill or select the cells. column() can be easily understood with below examples:
             </div>
         </div>
-        
+
         <script>
             onExample8Click = function () {
                 var fileName = $('#example8File').val();
@@ -671,6 +671,219 @@
                             <input type="text" class="form-control" id="example9File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button class="btn btn-success" type="submit" onclick="onExample9Click();">Download</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-dark">
+                Grid
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col">
+                Another useful method exposed with worksheet object is grid(). grid() let user define values in combination of rows and columns.
+                Parameters passed in grid is similar to row() and column(), but values passed in grid() is a two dimensional
+                array with row as the outer array, and column as the inner array. Some of the examples of grid() is:
+            </div>
+        </div>
+
+        <script>
+            onExample10Click = function () {
+                var fileName = $('#example10File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.grid(2, 3, [
+                    ['Cost', 'Sales', 'Profit'],
+                    [10, 12, { type: 'formula', value: 2, formula: '(D2 - C2)' }],
+                    [9, 12, { type: 'formula', value: 3, formula: '(D2 - C2)' }],
+                    [11, 12, { type: 'formula', value: 1, formula: '(D2 - C2)' }]
+                ]);
+                workbook.download(fileName).then(function () {
+                    $('#example10Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.grid(2,3,[
+                <br/>&emsp;['Cost', 'Sales', 'Profit'],
+                <br/>&emsp;[10, 12, {type: 'formula', value: 2, formula: '(D2 - C2)'}],
+                <br/>&emsp;[9, 12, {type: 'formula', value: 3, formula: '(D2 - C2)'}],
+                <br/>&emsp;[11, 12, {type: 'formula', value: 1, formula: '(D2 - C2)'}]
+                <br/>]);
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example10Collapsible" aria-expanded="false"
+                        aria-controls="example10Collapsible">Execute</button>
+                </p>
+                <div class="collapse file-collapse" id="example10Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example10File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample10Click();">Download</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            onExample11Click = function () {
+                var fileName = $('#example11File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.grid(2, 3, [['Hello', 'World']]);
+                worksheet.grid(2, 3).set([['Greetings'], ['Jon']]);
+                workbook.download(fileName).then(function () {
+                    $('#example11Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.grid(2, 3, [['Hello', 'World']]);
+                <br/> worksheet.grid(2, 3).set([['Greetings'], ['Jon']]);
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example11Collapsible" aria-expanded="false"
+                        aria-controls="example11Collapsible">Execute</button>
+                </p>
+                <div class="collapse file-collapse" id="example11Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example11File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample11Click();">Download</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-dark">
+                Shared Formula
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <div class="col">
+                Another method exposed with worksheet object is sharedFormula. Although user can set a formula type cell with formula values,
+                but sometimes for optimization, formula is shared among a range of cell. This range can be a column or row
+                of cells. sharedFormula accepts four arguments, i.e., formula to set, startCellIndex, endCellIndex and style.
+                Formula is the string written in formula bar of any workbook editor, startCellIndex and endCellIndex are
+                cell indices to start the formula from and end formula to. Cell Index is the string value of appended column
+                index and row index. style is used to apply styling which will be discussed later. When using formula type
+                of values, we usually define type attribute as “formula” and formula attribute as the formula string in JSON.
+                Apart from these two, user can also define value attribute, this value attribute is used to represent the
+                cached value. Usually Excel editors show this cached value when workbook is opened in read only mode. Value
+                here can also be a function type with rowIndex and columnIndex as parameters. This let user set cached value
+                dynamically.
+            </div>
+        </div>
+
+        <script>
+            onExample12Click = function () {
+                var fileName = $('#example12File').val();
+                if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+                    fileName += '.xlsx';
+                }
+                var workbook = oxml.xlsx();
+                var worksheet = workbook.sheet('sheet1');
+                worksheet.grid(2, 3, [
+                    ['Cost', 'Sales', 'Profit'],
+                    [10, 12],
+                    [9, 12],
+                    [11, 12],
+                    ['Total']
+                ]);
+                worksheet.sharedFormula('E3', 'E5', {
+                    type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+                        var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+                        var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+                        return sale - cost;
+                    }
+                });
+                worksheet.sharedFormula('C6', 'D6', {
+                    type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+                        var column = worksheet.column(3, 3), sum = 0;
+                        for (var index = 0; index < column.cells.length; index++) {
+                            if (column.cells[index].value && typeof column.cells[index].value === "number") {
+                                sum += column.cells[index].value;
+                            }
+                        }
+                        return sum;
+                    }
+                });
+                workbook.download(fileName).then(function () {
+                    $('#example12Collapsible').collapse('hide');
+                });
+            }
+        </script>
+
+        <div style="margin-top: 25px;">
+            <div class="alert alert-light">
+                var workbook = oxml.xlsx();
+                <br/> var worksheet = workbook.sheet('sheet1');
+                <br/> worksheet.grid(2, 3, [
+                <br/>&emsp;['Cost', 'Sales', 'Profit'],
+                <br/>&emsp;[10, 12],
+                <br/>&emsp;[9, 12],
+                <br/>&emsp;[11, 12],
+                <br/>&emsp;['Total']
+                <br/>]);
+                <br/>worksheet.sharedFormula('E3', 'E5', {
+                <br/>&emsp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+                    <br/>&emsp;&emsp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+                    <br/>&emsp;&emsp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+                    <br/>&emsp;&emsp;return sale - cost;
+                <br/>&emsp;}
+                <br/>});
+                <br/>worksheet.sharedFormula('C6', 'D6', {
+                <br/>&emsp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+                    <br/>&emsp;&emsp;var column = worksheet.column(3, 3), sum = 0;
+                    <br/>&emsp;&emsp;for (var index = 0; index < column.cells.length; index++) {
+                        <br/>&emsp;&emsp;&emsp;if (column.cells[index].value && typeof column.cells[index].value === "number") {
+                            <br/>&emsp;&emsp;&emsp;&emsp;sum += column.cells[index].value;
+                        <br/>&emsp;&emsp;&emsp;}
+                    <br/>&emsp;&emsp;}
+                    <br/>&emsp;return sum;
+                <br/>&emsp;}
+                <br/>});
+                <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
+                <hr/>
+                <p>
+                    <button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example12Collapsible" aria-expanded="false"
+                        aria-controls="example12Collapsible">Execute</button>
+                </p>
+                <div class="collapse file-collapse" id="example12Collapsible">
+                    <div class="card card-body">
+                        <form class="input-group mb-3" onsubmit="return false;">
+                            <input type="text" class="form-control" id="example12File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-success" type="submit" onclick="onExample12Click();">Download</button>
                             </div>
                         </form>
                     </div>
