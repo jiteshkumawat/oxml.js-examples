@@ -118,11 +118,11 @@
 					to any of the methods used. Methods supporting styling while filling the values are:
 					<br/>
 					<ul>
-						<li>updateValueInCell</li>
-						<li>updateValuesInColumn</li>
-						<li>updateValuesInRow</li>
-						<li>updateValuesInMatrix</li>
-						<li>updateSharedFormula</li>
+						<li>cell</li>
+						<li>column</li>
+						<li>row</li>
+						<li>grid</li>
+						<li>sharedFormula</li>
 					</ul>
 					They all take an additional parameter as expalined in below examples for cell and row, although similar implementation can
 					be obtained in all the methods. Appart from passing the JSON object while filling the value, user can also chain a style
@@ -175,14 +175,14 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-dark">
-				Styling with getCell
+				Styling with cell
 			</div>
 		</div>
 
 		<div class="row justify-content-md-center">
 			<div class="col">
-				getCell let user take a reference to cell and update style or get it's value. This method can be chained with style method
-				for styling a cell. This method takes tow arguments rowIndex, and columnIndex, which are 1 based index of row and column
+				cell() let user take a reference to cell and update style or get it's value. This method can be chained with style method
+				for styling a cell. This method takes two arguments rowIndex, and columnIndex, which are 1 based index of row and column
 				to select the cell.
 			</div>
 		</div>
@@ -193,11 +193,11 @@
 				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
 					fileName += '.xlsx';
 				}
-				var workbook = oxml.createXLSX();
-				var worksheet = workbook.addSheet('sheet1');
-				worksheet.updateValueInCell('Hello World!', 2, 2);
+				var workbook = oxml.xlsx();
+				var worksheet = workbook.sheet('sheet1');
+				worksheet.cell(2, 2, 'Hello World!', {fontColor: 'ff0000'});
 				worksheet
-					.getCell(2, 2)
+					.cell(2, 2)
 					.style({
 						bold: true
 					});
@@ -209,10 +209,10 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-light">
-				var workbook = oxml.createXLSX();
-				<br/>var worksheet = workbook.addSheet('sheet1');
-				<br/>worksheet.updateValueInCell('Hello World!', 2, 2);
-				<br/>worksheet.getCell(2, 2).style({ bold: true });
+				var workbook = oxml.xlsx();
+				<br/>var worksheet = workbook.sheet('sheet1');
+				<br/>worksheet.cell(2, 2, 'Hello World!', {fontColor: 'ff0000'});
+				<br/>worksheet.cell(2, 2).style({ bold: true });
 				<br/>workbook.download('workbook.xslx');
 				<hr/>
 				<p>
@@ -234,355 +234,13 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-dark">
-				Styling with getRange
+				Styling with row
 			</div>
 		</div>
 
 		<div class="row justify-content-md-center">
 			<div class="col">
-				getRange let user take a reference to cells and update it's style. This method can be chained with style method for styling
-				a collection of cells. This method takes 4 required parameters rowIndex, columnIndex, numberOfRows, and numberOfColumns.
-				<ul>
-					<li>
-						<b>rowIndex</b> is the 1 based index of row from where to start selection.</li>
-					<li>
-						<b>columnIndex</b> is the 1 based index of column from where to start selection.</li>
-					<li>
-						<b>numberOfRows</b> is the total number of rows to select, with minimum value of 1.</li>
-					<li>
-						<b>numberOfColumns</b> is the total number of columns to select, with minimum value of 1.</li>
-				</ul>
-			</div>
-		</div>
-
-		<script>
-			onExample4Click = function () {
-				var fileName = $('#example4File').val();
-				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
-					fileName += '.xlsx';
-				}
-				var workbook = oxml.createXLSX();
-				var worksheet = workbook.addSheet('sheet1');
-				worksheet
-					.getRange(2, 2, 3, 1)
-					.style({
-						fill: {
-							pattern: 'solid',
-							foreColor: '00ff00'
-						}
-					});
-				workbook.download(fileName).then(function () {
-					$('#example4Collapsible').collapse('hide');
-				});
-			}
-		</script>
-
-		<div style="margin-top: 25px;">
-			<div class="alert alert-light">
-				var workbook = oxml.createXLSX();
-				<br/>var worksheet = workbook.addSheet('sheet1');
-				<br/>worksheet
-				<br/>.getRange(2, 2, 3, 1)
-				<br/>.style({
-					<br/>&ensp;fill: {
-						<br/>&ensp;&ensp;pattern: 'solid',
-						<br/>&ensp;&ensp;foreColor: '00ff00'
-						<br/>&ensp;}
-				<br/>});
-				<br/>workbook.download('workbook.xslx');
-				<hr/>
-				<p>
-					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example4Collapsible" aria-expanded="false"
-					 aria-controls="example4Collapsible">Execute</button>
-				</p>
-				<div class="collapse file-collapse" id="example4Collapsible">
-					<div class="card card-body">
-						<form class="input-group mb-3" onsubmit="return false;">
-							<input type="text" class="form-control" id="example4File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
-							<div class="input-group-append">
-								<button class="btn btn-success" type="submit" onclick="onExample4Click();">Download</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div style="margin-top: 25px;">
-			<div class="alert alert-dark">
-				Styling with updateValueInCell
-			</div>
-		</div>
-
-		<div class="row justify-content-md-center">
-			<div class="col">
-				To provide styling user have to pass as optional parameter to updateValueInCell method. This optional parameter define styling
-				with some predefined properties as explained above.
-			</div>
-		</div>
-
-		<script>
-			onExample1Click = function () {
-				var fileName = $('#example1File').val();
-				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
-					fileName += '.xlsx';
-				}
-				var workbook = oxml.createXLSX();
-				var worksheet = workbook.addSheet('sheet1');
-				var normalStyle = {
-					fontName: 'Arial',
-					fontSize: 10,
-					numberFormat: '#,##0.00'
-				};
-				var headerStyle = {
-					fill: {
-						pattern: 'solid',
-						foreColor: '090A0C'
-					},
-					fontColor: 'ffffff',
-					bold: true,
-					border: {
-						color: 'ffff00',
-						style: 'double',
-						right: {
-							style: 'none'
-						},
-						left: {
-							style: 'none'
-						}
-					}
-				};
-				var totalCellsStyle = {
-					fill: {
-						pattern: 'solid',
-						foreColor: '090A0C'
-					},
-					fontColor: 'ffffff',
-					border: {
-						color: 'ffff00',
-						style: 'double',
-						top: {
-							style: 'none'
-						},
-						bottom: {
-							style: 'none'
-						}
-					}
-				}
-				worksheet.updateValueInCell(null, 1, 1);
-				worksheet.updateValueInCell({ type: 'string', value: 'Data 1' }, 1, 2, headerStyle);
-				worksheet.updateValueInCell('Data 2', 1, 3, headerStyle);
-				worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 1, 4, headerStyle);
-				worksheet.updateValueInCell(undefined, 2, 1);
-				worksheet.updateValueInCell({ type: "numeric", value: 5 }, 2, 2, normalStyle);
-				worksheet.updateValueInCell(9, 2, 3, normalStyle);
-				worksheet.updateValueInCell({ type: 'formula', formula: '(B2 + C2)', value: 14 }, 2, 4, normalStyle);
-				worksheet.updateValueInCell(null, 3, 1);
-				worksheet.updateValueInCell(7, 3, 2, normalStyle);
-				worksheet.updateValueInCell(3, 3, 3, normalStyle);
-				worksheet.updateValueInCell({ type: 'formula', formula: '(B3 + C3)', value: 10 }, 3, 4, normalStyle);
-				worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 4, 1, {
-					fill: {
-						pattern: 'solid',
-						foreColor: '090A0C'
-					},
-					fontColor: 'ffffff',
-					bold: true,
-					border: {
-						color: 'ffff00',
-						style: 'double',
-						right: {
-							style: 'none'
-						}
-					}
-				});
-				worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
-				var totalCells = worksheet.getRow(4, 2, 3);
-				totalCells.style({
-					fill: {
-						pattern: 'solid',
-						foreColor: '090A0C'
-					},
-					fontColor: 'ffffff',
-					border: {
-						color: 'ffff00',
-						style: 'double',
-						right: {
-							style: 'none'
-						},
-						left: {
-							style: 'none'
-						}
-					},
-					numberFormat: '#,##0.00'
-				});
-				worksheet.getCell(4, 4)
-					.style({
-						border: {
-							right: {
-								color: 'ffff00',
-								style: 'double'
-							},
-							top: {
-								style: 'none'
-							}
-						}
-					});
-				worksheet.getRange(2, 4, 2, 1)
-					.style(totalCellsStyle);
-				worksheet.getCell(1, 2)
-					.style({
-						border: {
-							left: {
-								color: 'ffff00',
-								style: 'double'
-							}
-						}
-					});
-				worksheet.getCell(1, 4)
-					.style({
-						border: {
-							right: {
-								color: 'ffff00',
-								style: 'double'
-							},
-							bottom: {
-								style: 'none'
-							}
-						}
-					});
-				workbook.download(fileName).then(function () {
-					$('#example1Collapsible').collapse('hide');
-				});
-			}
-		</script>
-
-		<div style="margin-top: 25px;">
-			<div class="alert alert-light">
-				var workbook = oxml.createXLSX();
-				<br/>var worksheet = workbook.addSheet('sheet1');
-				<br/>var normalStyle = {
-				<br/>&ensp; fontName: 'Arial',
-				<br/>&ensp;fontSize: 10,
-				<br/>&ensp;numberFormat: '#,##0.00'
-				<br/>};
-				<br/>var headerStyle = {
-				<br/>&ensp;fill: {
-				<br/>&ensp;&ensp;pattern: 'solid',
-				<br/>&ensp;&ensp;foreColor: '090A0C'
-				<br/>&ensp;},
-				<br/>&ensp;fontColor: 'ffffff',
-				<br/>&ensp;bold: true,
-				<br/>&ensp;border: {
-				<br/>&ensp;&ensp;color: 'ffff00',
-				<br/>&ensp;&ensp;style: 'double',
-				<br/>&ensp;&ensp;right: { style: 'none' },
-				<br/>&ensp;&ensp;left: { style: 'none' }
-				<br/>&ensp;}
-				<br/>};
-				<br/>var totalCellsStyle = {
-				<br/>&ensp;fill: {
-				<br/>&ensp;&ensp;pattern: 'solid',
-				<br/>&ensp;&ensp;foreColor: '090A0C'
-				<br/>&ensp;},
-				<br/>&ensp;fontColor: 'ffffff',
-				<br/>&ensp;border: {
-				<br/>&ensp;&ensp;color: 'ffff00',
-				<br/>&ensp;&ensp;style: 'double',
-				<br/>&ensp;&ensp;top: { style: 'none' },
-				<br/>&ensp;&ensp;bottom: { style: 'none' }
-				<br/>&ensp;}
-				<br/>}
-				<br/>worksheet.updateValueInCell(null, 1, 1);
-				<br/>worksheet.updateValueInCell({ type: 'string', value: 'Data 1' }, 1, 2, headerStyle);
-				<br/>worksheet.updateValueInCell('Data 2', 1, 3, headerStyle);
-				<br/>worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 1, 4, headerStyle);
-				<br/>worksheet.updateValueInCell(undefined, 2, 1);
-				<br/>worksheet.updateValueInCell({ type: "numeric", value: 5 }, 2, 2, normalStyle);
-				<br/>worksheet.updateValueInCell(9, 2, 3, normalStyle);
-				<br/>worksheet.updateValueInCell({ type: 'formula', formula: '(B2 + C2)', value: 14 }, 2, 4, normalStyle);
-				<br/>worksheet.updateValueInCell(null, 3, 1);
-				<br/>worksheet.updateValueInCell(7, 3, 2, normalStyle);
-				<br/>worksheet.updateValueInCell(3, 3, 3, normalStyle);
-				<br/>worksheet.updateValueInCell({ type: 'formula', formula: '(B3 + C3)', value: 10 }, 3, 4, normalStyle);
-				<br/>worksheet.updateValueInCell({ type: 'sharedString', value: 'Total' }, 4, 1, {
-				<br/>&ensp;fill: {
-				<br/>&ensp;&ensp;pattern: 'solid',
-				<br/>&ensp;&ensp;foreColor: '090A0C'
-				<br/>&ensp;},
-				<br/>&ensp;fontColor: 'ffffff',
-				<br/>&ensp;bold: true,
-				<br/>&ensp;border: {
-				<br/>&ensp;&ensp;color: 'ffff00',
-				<br/>&ensp;&ensp;style: 'double',
-				<br/>&ensp;&ensp;right: { style: 'none' }
-				<br/>&ensp;}
-				<br/>});
-				<br/>worksheet.updateSharedFormula('(B2 + B3)', 'B4', 'D4');
-				<br/>var totalCells = worksheet.getRow(4, 2, 3);
-				<br/>totalCells.style({
-				<br/>&ensp;fill: {
-				<br/>&ensp;&ensp;pattern: 'solid',
-				<br/>&ensp;&ensp;foreColor: '090A0C'
-				<br/>&ensp;},
-				<br/>&ensp;fontColor: 'ffffff',
-				<br/>&ensp;border: {
-				<br/>&ensp;&ensp;color: 'ffff00',
-				<br/>&ensp;&ensp;style: 'double',
-				<br/>&ensp;&ensp;right: { style: 'none' },
-				<br/>&ensp;&ensp;left: { style: 'none' }
-				<br/>&ensp;},
-				<br/>&ensp;numberFormat: '#,##0.00'
-				<br/>});
-				<br/>worksheet.getCell(4, 4)
-				<br/>&ensp;.style({
-				<br/>&ensp;&ensp;border: {
-				<br/>&ensp;&ensp;&ensp;right: { color: 'ffff00', style: 'double' },
-				<br/>&ensp;&ensp;&ensp;top: { style: 'none' }
-				<br/>&ensp;&ensp;}
-				<br/>&ensp;});
-				<br/>worksheet.getRange(2, 4, 2, 1).style(totalCellsStyle);
-				<br/>worksheet.getCell(1, 2)
-				<br/>&ensp;.style({
-				<br/>&ensp;&ensp;border: {
-				<br/>&ensp;&ensp;&ensp;left: { color: 'ffff00', style: 'double' }
-				<br/>&ensp;&ensp;}
-				<br/>&ensp;});
-				<br/>worksheet.getCell(1, 4)
-				<br/>&ensp;.style({
-				<br/>&ensp;&ensp;border: {
-				<br/>&ensp;&ensp;&ensp;right: { color: 'ffff00', style: 'double' },
-				<br/>&ensp;&ensp;bottom: { style: 'none' }
-				<br/>&ensp;&ensp;}
-				<br/>&ensp;});
-				<br/>workbook.download('workbook.xslx');
-				<hr/>
-				<p>
-					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example1Collapsible" aria-expanded="false"
-					 aria-controls="example1Collapsible">Execute</button>
-				</p>
-				<div class="collapse file-collapse" id="example1Collapsible">
-					<div class="card card-body">
-						<form class="input-group mb-3" onsubmit="return false;">
-							<input type="text" class="form-control" id="example1File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
-							<div class="input-group-append">
-								<button class="btn btn-success" type="submit" onclick="onExample1Click();">Download</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div style="margin-top: 25px;">
-			<div class="alert alert-dark">
-				Styling with updateValueInRow
-			</div>
-		</div>
-
-		<div class="row justify-content-md-center">
-			<div class="col">
-				To provide styling user have to pass as optional parameter to updateValueInRow method. This optional parameter define styling
+				To provide styling user have to pass as optional parameter to row() method. This optional parameter define styling
 				with some predefined properties as explained above.
 			</div>
 		</div>
@@ -593,9 +251,9 @@
 				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
 					fileName += '.xlsx';
 				}
-				var workbook = oxml.createXLSX();
-				var worksheet = workbook.addSheet('sheet1');
-				worksheet.updateValuesInRow('Total of Data', 1, 1, {
+				var workbook = oxml.xlsx();
+				var worksheet = workbook.sheet('sheet1');
+				worksheet.row(1, 1, 'Total of Data', {
 					fill: {
 						gradient: {
 							degree: 90,
@@ -613,16 +271,16 @@
 					bold: true,
 					underline: true
 				});
-				worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2, {
+				worksheet.row(2, 2, ['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], {
 					bold: true,
 					italic: true,
 					underline: true,
 					fontName: 'Calibri Light',
 					fontColor: '0000ff'
 				});
-				worksheet.updateValuesInRow([5, 9], 3, 2);
-				worksheet.updateValuesInRow([null, 7, 3], 4);
-				worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4', {
+				worksheet.row(3, 2, [5, 9]);
+				worksheet.row(4, 2, [7, 3]);
+				worksheet.sharedFormula('D3', 'D4', '(B3 + C3)', {
 					bold: true
 				});
 				workbook.download(fileName).then(function () {
@@ -633,9 +291,9 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-light">
-				var workbook = oxml.createXLSX();
-				<br/>var worksheet = workbook.addSheet('sheet1');
-				<br/>worksheet.updateValuesInRow('Total of Data', 1, 1, {
+				var workbook = oxml.xlsx();
+				<br/>var worksheet = workbook.sheet('sheet1');
+				<br/>worksheet.row(1, 1, 'Total of Data', {
 				<br/>&ensp;fill: {
 				<br/>&ensp;&ensp;gradient: {
 				<br/>&ensp;&ensp;&ensp;degree: 90,
@@ -653,16 +311,16 @@
 				<br/>&ensp;bold: true,
 				<br/>&ensp;underline: true
 				<br/>});
-				<br/>worksheet.updateValuesInRow(['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], 2, 2, {
+				<br/>worksheet.row(2, 2, ['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], {
 				<br/>&ensp;bold: true,
 				<br/>&ensp;italic: true,
 				<br/>&ensp;underline: true,
 				<br/>&ensp;fontName: 'Calibri Light',
 				<br/>&ensp;fontColor: '0000ff'
 				<br/>});
-				<br/>worksheet.updateValuesInRow([5, 9], 3, 2);
-				<br/>worksheet.updateValuesInRow([null, 7, 3], 4);
-				<br/>worksheet.updateSharedFormula('(B3 + C3)', 'D3', 'D4', { bold: true });
+				<br/>worksheet.row(3, 2, [5, 9]);
+				<br/>worksheet.row(4, 2, [7, 3]);
+				<br/>worksheet.row('D3', 'D4', '(B3 + C3)', { bold: true });
 				<br/>workbook.download('workbook.xslx');
 				<hr/>
 				<p>
