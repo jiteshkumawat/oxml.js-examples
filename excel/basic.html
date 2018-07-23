@@ -856,20 +856,20 @@
                 <br/>]);
                 <br/>worksheet.sharedFormula('E3', 'E5', {
                 <br/>&emsp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
-                    <br/>&emsp;&emsp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
-                    <br/>&emsp;&emsp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
-                    <br/>&emsp;&emsp;return sale - cost;
+                <br/>&emsp;&emsp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+                <br/>&emsp;&emsp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+                <br/>&emsp;&emsp;return sale - cost;
                 <br/>&emsp;}
                 <br/>});
                 <br/>worksheet.sharedFormula('C6', 'D6', {
                 <br/>&emsp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
-                    <br/>&emsp;&emsp;var column = worksheet.column(3, 3), sum = 0;
-                    <br/>&emsp;&emsp;for (var index = 0; index < column.cells.length; index++) {
-                        <br/>&emsp;&emsp;&emsp;if (column.cells[index].value && typeof column.cells[index].value === "number") {
-                            <br/>&emsp;&emsp;&emsp;&emsp;sum += column.cells[index].value;
-                        <br/>&emsp;&emsp;&emsp;}
-                    <br/>&emsp;&emsp;}
-                    <br/>&emsp;return sum;
+                <br/>&emsp;&emsp;var column = worksheet.column(3, 3), sum = 0;
+                <br/>&emsp;&emsp;for (var index = 0; index
+                < column.cells.length; index++) { <br/>&emsp;&emsp;&emsp;if (column.cells[index].value && typeof column.cells[index].value === "number") {
+                <br/>&emsp;&emsp;&emsp;&emsp;sum += column.cells[index].value;
+                <br/>&emsp;&emsp;&emsp;}
+                <br/>&emsp;&emsp;}
+                <br/>&emsp;return sum;
                 <br/>&emsp;}
                 <br/>});
                 <br/> workbook.download('workbook.xslx').then(function(){ console.log('Downloaded.'); });
