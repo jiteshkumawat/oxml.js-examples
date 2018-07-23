@@ -1,0 +1,21 @@
+{
+  "name": "oxmljs-examples",
+  "version": "1.0.0",
+  "description": "Javascript library examples for oxml.js library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "js",
+    "openxml",
+    "docx",
+    "xlsx"
+  ],
+  "author": "Jitesh Kumawat <jitesh.kumawat@gmail.com> (https://jiteshkumawat.github.io/oxml.js/)",
+  "license": "MIT",
+  "dependencies": {
+    "jszip": "^3.1.5",
+    "oxmljs": "^0.1.1"
+  }
+}
