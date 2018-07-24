@@ -64,7 +64,7 @@
 						</a>
 						<div class="dropdown-menu" aria-labelledby="excelDropdown">
 							<a class="dropdown-item" href="./basic.html#read">Basic Usage</a>
-							<a class="dropdown-item active" href="./tables.html#read">Styling</a>
+							<a class="dropdown-item active" href="./tables.html#read">Tables</a>
 							<a class="dropdown-item" href="./styling.html#read">Styling</a>
 						</div>
 					</li>
@@ -139,7 +139,22 @@
 							single value need to be defined to filter, than we can use value attribute, and for multiple values we can use values
 							attribute with array of values. Type let user define the custom filter. It can have values "default" and "custom"
 							for default and custom filters respectively. Operator is used with custom filters, they are some predefined operators
-							for performing filtering.  </li>
+							for performing filtering. The value of operator can be "greaterThan", "greaterThanOrEqual", "lessThan", "lessThanOrEqual",
+							"notEqual" or "equal". The "and" flag is used to identify if all the filters defined are inclusive or exclusive. The
+							use of filters can be more cleared from below examples.
+						</li>
+						<li>
+							<b>Sort Table:</b> Sorting defines the sort applied on the tables. This attribute does not actually sorts the values,
+							as for sorting values should be repositioned in excel. However, this will only let the excel know that a particular
+							columns contains sorted values. Sorting is applied with defining a sort attribute on table options. This attribute
+							can have a numeric value or a JSON object. When defined with a numeric value, the column representation with particular
+							number is sorted in ascending order. However, when defined with a JSON object, this value can be defined with attributes
+							"column", "direction", "caseSensitive". Column attribute is required to identify column, which have to be sorted.
+							This is numeric representation of column to perform sorting. Direction can have "ascending" and "descending" value,
+							identifying the sort applied on column respectively, which is "ascending" by default. CaseSensitive identifies if
+							sorting is case sensitive or not. This can be set true or false, which by default is true. Sorting can be more explained
+							with below examples.
+						</li>
 					</ul>
 				</p>
 			</div>
@@ -147,34 +162,46 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-dark">
-				Styling with cell
-			</div>
-		</div>
-
-		<div class="row justify-content-md-center">
-			<div class="col">
-				cell() let user take a reference to cell and update style or get it's value. This method can be chained with style method
-				for styling a cell. This method takes two arguments rowIndex, and columnIndex, which are 1 based index of row and column
-				to select the cell.
+				Define Table
 			</div>
 		</div>
 
 		<script>
-			onExample3Click = function () {
-				var fileName = $('#example3File').val();
+			onExample1Click = function () {
+				var fileName = $('#example1File').val();
 				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
 					fileName += '.xlsx';
 				}
 				var workbook = oxml.xlsx();
 				var worksheet = workbook.sheet('sheet1');
-				worksheet.cell(2, 2, 'Hello World!', { fontColor: 'ff0000' });
-				worksheet
-					.cell(2, 2)
-					.style({
-						bold: true
-					});
+				worksheet.grid(2, 3, [
+					['Cost', 'Sales', 'Profit'],
+					[10, 12],
+					[9, 12],
+					[11, 12],
+					['Total']
+				]);
+				worksheet.sharedFormula('E3', 'E5', {
+					type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+						var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+						var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+						return sale - cost;
+					}
+				});
+				worksheet.sharedFormula('C6', 'D6', {
+					type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+						var column = worksheet.column(3, 3), sum = 0;
+						for (var index = 0; index < column.cells.length; index++) {
+							if (column.cells[index].value && typeof column.cells[index].value === "number") {
+								sum += column.cells[index].value;
+							}
+						}
+						return sum;
+					}
+				});
+				worksheet.table('Table1', 'C2', 'E6');
 				workbook.download(fileName).then(function () {
-					$('#example3Collapsible').collapse('hide');
+					$('#example1Collapsible').collapse('hide');
 				});
 			}
 		</script>
@@ -183,20 +210,42 @@
 			<div class="alert alert-light">
 				var workbook = oxml.xlsx();
 				<br/>var worksheet = workbook.sheet('sheet1');
-				<br/>worksheet.cell(2, 2, 'Hello World!', {fontColor: 'ff0000'});
-				<br/>worksheet.cell(2, 2).style({ bold: true });
+				<br/>worksheet.grid(2, 3, [
+				<br/>&ensp;['Cost', 'Sales', 'Profit'],
+				<br/>&ensp;[10, 12],
+				<br/>&ensp;[9, 12],
+				<br/>&ensp;[11, 12],
+				<br/>&ensp;['Total']
+				<br/>]);
+				<br/>worksheet.sharedFormula('E3', 'E5', {
+				<br/>&ensp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+				<br/>&ensp;&ensp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+				<br/>&ensp;&ensp;return sale - cost;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.sharedFormula('C6', 'D6', {
+				<br/>&ensp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var column = worksheet.column(3, 3), sum = 0;
+				<br/>&ensp;&ensp;for (var index = 0; index
+				< column.cells.length; index++) { <br/>&ensp;&ensp;&ensp;if (column.cells[index].value && typeof column.cells[index].value === "number") sum += column.cells[index].value;
+				<br/>&ensp;&ensp;&ensp;}
+				<br/>&ensp;&ensp;return sum;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.table('Table1', 'C2', 'E6');
 				<br/>workbook.download('workbook.xslx');
 				<hr/>
 				<p>
-					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example3Collapsible" aria-expanded="false"
-					 aria-controls="example3Collapsible">Execute</button>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example1Collapsible" aria-expanded="false"
+					 aria-controls="example1Collapsible">Execute</button>
 				</p>
-				<div class="collapse file-collapse" id="example3Collapsible">
+				<div class="collapse file-collapse" id="example1Collapsible">
 					<div class="card card-body">
 						<form class="input-group mb-3" onsubmit="return false;">
-							<input type="text" class="form-control" id="example3File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<input type="text" class="form-control" id="example1File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
 							<div class="input-group-append">
-								<button class="btn btn-success" type="submit" onclick="onExample3Click();">Download</button>
+								<button class="btn btn-success" type="submit" onclick="onExample1Click();">Download</button>
 							</div>
 						</form>
 					</div>
@@ -206,14 +255,7 @@
 
 		<div style="margin-top: 25px;">
 			<div class="alert alert-dark">
-				Styling with row
-			</div>
-		</div>
-
-		<div class="row justify-content-md-center">
-			<div class="col">
-				To provide styling user have to pass as optional parameter to row() method. This optional parameter define styling with some
-				predefined properties as explained above.
+				Filter Table
 			</div>
 		</div>
 
@@ -225,36 +267,32 @@
 				}
 				var workbook = oxml.xlsx();
 				var worksheet = workbook.sheet('sheet1');
-				worksheet.row(1, 1, 'Total of Data', {
-					fill: {
-						gradient: {
-							degree: 90,
-							stops: [{
-								position: 0,
-								color: 'FF92D050'
-							},
-							{
-								position: 1,
-								color: 'FF0070C0'
-							}]
+				worksheet.grid(2, 3, [
+					['Cost', 'Sales', 'Profit'],
+					[10, 12],
+					[9, 12],
+					[11, 12],
+					['Total']
+				]);
+				worksheet.sharedFormula('E3', 'E5', {
+					type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+						var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+						var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+						return sale - cost;
+					}
+				});
+				worksheet.sharedFormula('C6', 'D6', {
+					type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+						var column = worksheet.column(3, 3), sum = 0;
+						for (var index = 0; index < column.cells.length; index++) {
+							if (column.cells[index].value && typeof column.cells[index].value === "number") {
+								sum += column.cells[index].value;
+							}
 						}
-					},
-					fontColor: 'ffffff',
-					bold: true,
-					underline: true
+						return sum;
+					}
 				});
-				worksheet.row(2, 2, ['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], {
-					bold: true,
-					italic: true,
-					underline: true,
-					fontName: 'Calibri Light',
-					fontColor: '0000ff'
-				});
-				worksheet.row(3, 2, [5, 9]);
-				worksheet.row(4, 2, [7, 3]);
-				worksheet.sharedFormula('D3', 'D4', '(B3 + C3)', {
-					bold: true
-				});
+				worksheet.table('Table1', 'C2', 'E6', { filters: true });
 				workbook.download(fileName).then(function () {
 					$('#example2Collapsible').collapse('hide');
 				});
@@ -265,34 +303,30 @@
 			<div class="alert alert-light">
 				var workbook = oxml.xlsx();
 				<br/>var worksheet = workbook.sheet('sheet1');
-				<br/>worksheet.row(1, 1, 'Total of Data', {
-				<br/>&ensp;fill: {
-				<br/>&ensp;&ensp;gradient: {
-				<br/>&ensp;&ensp;&ensp;degree: 90,
-				<br/>&ensp;&ensp;&ensp;stops: [{
-				<br/>&ensp;&ensp;&ensp;&ensp;position: 0,
-				<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF92D050'
-				<br/>&ensp;&ensp;&ensp;},
-				<br/>&ensp;&ensp;&ensp;{
-				<br/>&ensp;&ensp;&ensp;&ensp;position: 1,
-				<br/>&ensp;&ensp;&ensp;&ensp;color: 'FF0070C0'
-				<br/>&ensp;&ensp;&ensp;}]
-				<br/>&ensp;&ensp;}
-				<br/>&ensp;},
-				<br/>&ensp;fontColor: 'ffffff',
-				<br/>&ensp;bold: true,
-				<br/>&ensp;underline: true
+				<br/>worksheet.grid(2, 3, [
+				<br/>&ensp;['Cost', 'Sales', 'Profit'],
+				<br/>&ensp;[10, 12],
+				<br/>&ensp;[9, 12],
+				<br/>&ensp;[11, 12],
+				<br/>&ensp;['Total']
+				<br/>]);
+				<br/>worksheet.sharedFormula('E3', 'E5', {
+				<br/>&ensp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+				<br/>&ensp;&ensp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+				<br/>&ensp;&ensp;return sale - cost;
+				<br/>&ensp;}
 				<br/>});
-				<br/>worksheet.row(2, 2, ['Data 1', 'Data 2', { type: 'sharedString', value: 'Total' }], {
-				<br/>&ensp;bold: true,
-				<br/>&ensp;italic: true,
-				<br/>&ensp;underline: true,
-				<br/>&ensp;fontName: 'Calibri Light',
-				<br/>&ensp;fontColor: '0000ff'
+				<br/>worksheet.sharedFormula('C6', 'D6', {
+				<br/>&ensp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var column = worksheet.column(3, 3), sum = 0;
+				<br/>&ensp;&ensp;for (var index = 0; index
+				< column.cells.length; index++) { <br/>&ensp;&ensp;&ensp;if (column.cells[index].value && typeof column.cells[index].value === "number") sum += column.cells[index].value;
+				<br/>&ensp;&ensp;&ensp;}
+				<br/>&ensp;&ensp;return sum;
+				<br/>&ensp;}
 				<br/>});
-				<br/>worksheet.row(3, 2, [5, 9]);
-				<br/>worksheet.row(4, 2, [7, 3]);
-				<br/>worksheet.row('D3', 'D4', '(B3 + C3)', { bold: true });
+				<br/>worksheet.table('Table1', 'C2', 'E6', {filters: true});
 				<br/>workbook.download('workbook.xslx');
 				<hr/>
 				<p>
@@ -312,10 +346,457 @@
 			</div>
 		</div>
 
+		<script>
+			onExample3Click = function () {
+				var fileName = $('#example3File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.xlsx();
+				var worksheet = workbook.sheet('sheet1');
+				worksheet.grid(2, 3, [
+					['Cost', 'Sales', 'Profit'],
+					[10, 12],
+					[9, 12],
+					[11, 12],
+					['Total']
+				]);
+				worksheet.sharedFormula('E3', 'E5', {
+					type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+						var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+						var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+						return sale - cost;
+					}
+				});
+				worksheet.sharedFormula('C6', 'D6', {
+					type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+						var column = worksheet.column(3, 3), sum = 0;
+						for (var index = 0; index < column.cells.length; index++) {
+							if (column.cells[index].value && typeof column.cells[index].value === "number") {
+								sum += column.cells[index].value;
+							}
+						}
+						return sum;
+					}
+				});
+				worksheet.table('Table1', 'C2', 'E6', { filters: [{ value: 9, column: 1 }] });
+				workbook.download(fileName).then(function () {
+					$('#example3Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.xlsx();
+				<br/>var worksheet = workbook.sheet('sheet1');
+				<br/>worksheet.grid(2, 3, [
+				<br/>&ensp;['Cost', 'Sales', 'Profit'],
+				<br/>&ensp;[10, 12],
+				<br/>&ensp;[9, 12],
+				<br/>&ensp;[11, 12],
+				<br/>&ensp;['Total']
+				<br/>]);
+				<br/>worksheet.sharedFormula('E3', 'E5', {
+				<br/>&ensp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+				<br/>&ensp;&ensp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+				<br/>&ensp;&ensp;return sale - cost;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.sharedFormula('C6', 'D6', {
+				<br/>&ensp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var column = worksheet.column(3, 3), sum = 0;
+				<br/>&ensp;&ensp;for (var index = 0; index
+				< column.cells.length; index++) { <br/>&ensp;&ensp;&ensp;if (column.cells[index].value && typeof column.cells[index].value === "number") sum += column.cells[index].value;
+				<br/>&ensp;&ensp;&ensp;}
+				<br/>&ensp;&ensp;return sum;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.table('Table1', 'C2', 'E6', {filters: [{value: 9, column: 1}]});
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example3Collapsible" aria-expanded="false"
+					 aria-controls="example3Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example3Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example3File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample3Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			onExample4Click = function () {
+				var fileName = $('#example4File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.xlsx();
+				var worksheet = workbook.sheet('sheet1');
+				worksheet.grid(2, 3, [
+					['Cost', 'Sales', 'Profit'],
+					[10, 12],
+					[9, 12],
+					[11, 12],
+					['Total']
+				]);
+				worksheet.sharedFormula('E3', 'E5', {
+					type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+						var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+						var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+						return sale - cost;
+					}
+				});
+				worksheet.sharedFormula('C6', 'D6', {
+					type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+						var column = worksheet.column(3, 3), sum = 0;
+						for (var index = 0; index < column.cells.length; index++) {
+							if (column.cells[index].value && typeof column.cells[index].value === "number") {
+								sum += column.cells[index].value;
+							}
+						}
+						return sum;
+					}
+				});
+				worksheet.table('Table1', 'C2', 'E6', { filters: [{ values: [9, 10], column: 1 }] });
+				workbook.download(fileName).then(function () {
+					$('#example4Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.xlsx();
+				<br/>var worksheet = workbook.sheet('sheet1');
+				<br/>worksheet.grid(2, 3, [
+				<br/>&ensp;['Cost', 'Sales', 'Profit'],
+				<br/>&ensp;[10, 12],
+				<br/>&ensp;[9, 12],
+				<br/>&ensp;[11, 12],
+				<br/>&ensp;['Total']
+				<br/>]);
+				<br/>worksheet.sharedFormula('E3', 'E5', {
+				<br/>&ensp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+				<br/>&ensp;&ensp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+				<br/>&ensp;&ensp;return sale - cost;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.sharedFormula('C6', 'D6', {
+				<br/>&ensp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var column = worksheet.column(3, 3), sum = 0;
+				<br/>&ensp;&ensp;for (var index = 0; index
+				< column.cells.length; index++) { <br/>&ensp;&ensp;&ensp;if (column.cells[index].value && typeof column.cells[index].value === "number") sum += column.cells[index].value;
+				<br/>&ensp;&ensp;&ensp;}
+				<br/>&ensp;&ensp;return sum;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.table('Table1', 'C2', 'E6', {filters: [{values: [9, 10], column: 1}]});
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example4Collapsible" aria-expanded="false"
+					 aria-controls="example4Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example4Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example4File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample4Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			onExample5Click = function () {
+				var fileName = $('#example5File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.xlsx();
+				var worksheet = workbook.sheet('sheet1');
+				worksheet.grid(2, 3, [
+					['Cost', 'Sales', 'Profit'],
+					[10, 12],
+					[9, 12],
+					[11, 12],
+					['Total']
+				]);
+				worksheet.sharedFormula('E3', 'E5', {
+					type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+						var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+						var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+						return sale - cost;
+					}
+				});
+				worksheet.sharedFormula('C6', 'D6', {
+					type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+						var column = worksheet.column(3, 3), sum = 0;
+						for (var index = 0; index < column.cells.length; index++) {
+							if (column.cells[index].value && typeof column.cells[index].value === "number") {
+								sum += column.cells[index].value;
+							}
+						}
+						return sum;
+					}
+				});
+				worksheet.table('Table1', 'C2', 'E6', {
+					filters: [{ value: 10, column: 1, type: "custom", operator: "greaterThanOrEqual", and: true },
+					{ value: 11, column: 1, type: "custom", operator: "lessThanOrEqual", and: true }]
+				});
+				workbook.download(fileName).then(function () {
+					$('#example5Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.xlsx();
+				<br/>var worksheet = workbook.sheet('sheet1');
+				<br/>worksheet.grid(2, 3, [
+				<br/>&ensp;['Cost', 'Sales', 'Profit'],
+				<br/>&ensp;[10, 12],
+				<br/>&ensp;[9, 12],
+				<br/>&ensp;[11, 12],
+				<br/>&ensp;['Total']
+				<br/>]);
+				<br/>worksheet.sharedFormula('E3', 'E5', {
+				<br/>&ensp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+				<br/>&ensp;&ensp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+				<br/>&ensp;&ensp;return sale - cost;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.sharedFormula('C6', 'D6', {
+				<br/>&ensp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var column = worksheet.column(3, 3), sum = 0;
+				<br/>&ensp;&ensp;for (var index = 0; index
+				< column.cells.length; index++) { <br/>&ensp;&ensp;&ensp;if (column.cells[index].value && typeof column.cells[index].value === "number") sum += column.cells[index].value;
+				<br/>&ensp;&ensp;&ensp;}
+				<br/>&ensp;&ensp;return sum;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.table('Table1', 'C2', 'E6', {
+				<br/>&ensp;filters: [{ value: 10, column: 1, type: "custom", operator: "greaterThanOrEqual", and: true },
+				<br/>&ensp;{ value: 11, column: 1, type: "custom", operator: "lessThanOrEqual", and: true }]
+				<br/>});
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example5Collapsible" aria-expanded="false"
+					 aria-controls="example5Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example5Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example5File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample5Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-dark">
+				Sort Table
+			</div>
+		</div>
+
+		<script>
+			onExample6Click = function () {
+				var fileName = $('#example6File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.xlsx();
+				var worksheet = workbook.sheet('sheet1');
+				worksheet.grid(2, 3, [
+					['Cost', 'Sales', 'Profit'],
+					[9, 12],
+					[10, 12],
+					[11, 12],
+					['Total']
+				]);
+				worksheet.sharedFormula('E3', 'E5', {
+					type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+						var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+						var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+						return sale - cost;
+					}
+				});
+				worksheet.sharedFormula('C6', 'D6', {
+					type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+						var column = worksheet.column(3, 3), sum = 0;
+						for (var index = 0; index < column.cells.length; index++) {
+							if (column.cells[index].value && typeof column.cells[index].value === "number") {
+								sum += column.cells[index].value;
+							}
+						}
+						return sum;
+					}
+				});
+				worksheet.table('Table1', 'C2', 'E6', { sort: 1, filters: true });
+				workbook.download(fileName).then(function () {
+					$('#example6Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.xlsx();
+				<br/>var worksheet = workbook.sheet('sheet1');
+				<br/>worksheet.grid(2, 3, [
+				<br/>&ensp;['Cost', 'Sales', 'Profit'],
+				<br/>&ensp;[9, 12],
+				<br/>&ensp;[10, 12],
+				<br/>&ensp;[11, 12],
+				<br/>&ensp;['Total']
+				<br/>]);
+				<br/>worksheet.sharedFormula('E3', 'E5', {
+				<br/>&ensp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+				<br/>&ensp;&ensp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+				<br/>&ensp;&ensp;return sale - cost;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.sharedFormula('C6', 'D6', {
+				<br/>&ensp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var column = worksheet.column(3, 3), sum = 0;
+				<br/>&ensp;&ensp;for (var index = 0; index
+				< column.cells.length; index++) { <br/>&ensp;&ensp;&ensp;if (column.cells[index].value && typeof column.cells[index].value === "number") sum += column.cells[index].value;
+				<br/>&ensp;&ensp;&ensp;}
+				<br/>&ensp;&ensp;return sum;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.table('Table1', 'C2', 'E6', {sort: 1, filters: true});
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example6Collapsible" aria-expanded="false"
+					 aria-controls="example6Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example6Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example6File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample6Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			onExample7Click = function () {
+				var fileName = $('#example7File').val();
+				if (fileName.replace('.xlsx', '') !== fileName + '.xlsx') {
+					fileName += '.xlsx';
+				}
+				var workbook = oxml.xlsx();
+				var worksheet = workbook.sheet('sheet1');
+				worksheet.grid(2, 3, [
+					['Cost', 'Sales', 'Profit'],
+					[11, 12],
+					[10, 12],
+					[9, 12],
+					['Total']
+				]);
+				worksheet.sharedFormula('E3', 'E5', {
+					type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+						var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+						var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+						return sale - cost;
+					}
+				});
+				worksheet.sharedFormula('C6', 'D6', {
+					type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+						var column = worksheet.column(3, 3), sum = 0;
+						for (var index = 0; index < column.cells.length; index++) {
+							if (column.cells[index].value && typeof column.cells[index].value === "number") {
+								sum += column.cells[index].value;
+							}
+						}
+						return sum;
+					}
+				});
+				worksheet.table('Table1', 'C2', 'E6', { sort: { direction: "descending", column: 1, caseSensitive: false }, filters: true });
+				workbook.download(fileName).then(function () {
+					$('#example7Collapsible').collapse('hide');
+				});
+			}
+		</script>
+
+		<div style="margin-top: 25px;">
+			<div class="alert alert-light">
+				var workbook = oxml.xlsx();
+				<br/>var worksheet = workbook.sheet('sheet1');
+				<br/>worksheet.grid(2, 3, [
+				<br/>&ensp;['Cost', 'Sales', 'Profit'],
+				<br/>&ensp;[11, 12],
+				<br/>&ensp;[10, 12],
+				<br/>&ensp;[9, 12],
+				<br/>&ensp;['Total']
+				<br/>]);
+				<br/>worksheet.sharedFormula('E3', 'E5', {
+				<br/>&ensp;type: 'formula', formula: '(D3 - C3)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var sale = worksheet.cell(rowIndex, columnIndex - 1).value;
+				<br/>&ensp;&ensp;var cost = worksheet.cell(rowIndex, columnIndex - 2).value;
+				<br/>&ensp;&ensp;return sale - cost;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.sharedFormula('C6', 'D6', {
+				<br/>&ensp;type: 'formula', formula: 'SUM(C3:C5)', value: function (rowIndex, columnIndex) {
+				<br/>&ensp;&ensp;var column = worksheet.column(3, 3), sum = 0;
+				<br/>&ensp;&ensp;for (var index = 0; index
+				< column.cells.length; index++) { <br/>&ensp;&ensp;&ensp;if (column.cells[index].value && typeof column.cells[index].value === "number") sum += column.cells[index].value;
+				<br/>&ensp;&ensp;&ensp;}
+				<br/>&ensp;&ensp;return sum;
+				<br/>&ensp;}
+				<br/>});
+				<br/>worksheet.table('Table1', 'C2', 'E6', { sort: { direction: "descending", column: 1, caseSensitive: false }, filters: true });
+				<br/>workbook.download('workbook.xslx');
+				<hr/>
+				<p>
+					<button type="button" class="btn btn-dark" data-toggle="collapse" data-target="#example7Collapsible" aria-expanded="false"
+					 aria-controls="example7Collapsible">Execute</button>
+				</p>
+				<div class="collapse file-collapse" id="example7Collapsible">
+					<div class="card card-body">
+						<form class="input-group mb-3" onsubmit="return false;">
+							<input type="text" class="form-control" id="example7File" placeholder="File Name" aria-label="File Name" aria-describedby="basic-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-success" type="submit" onclick="onExample7Click();">Download</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<nav aria-label="footer-navigation">
 			<ul class="pagination justify-content-center">
 				<li class="page-item">
-					<a class="page-link" href="../index.html#read" tabindex="-1">Back</a>
+					<a class="page-link" href="./basic.html#read" tabindex="-1">Back</a>
 				</li>
 				<li class="page-item">
 					<a class="page-link" href="../index.html#read" tabindex="-1">Home</a>
